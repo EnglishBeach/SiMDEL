@@ -1,0 +1,134 @@
+[project]
+name = "simdel"
+version = "0.0.0"
+description = "Coming soon. SImple Molecular Dynamics Expandable Library - easy to start MD library"
+authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
+
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+
+# LINT
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+ignore = [
+    "EXE002",  # shebang
+    "RUF104",  # ruff: enable
+    "ERA001",  # commentary, switch
+    "BLE001",  # pure Exception
+    "TD002",   # author name in TODO,
+    "TD003",   # issue link
+    "FIX002",  # todo
+    "D401",    # imperative mood docstring
+    "E741",    # l O I
+    "TC001",   # import internal for annotations
+    "TC002",   # import external for annotations
+    "TC003",   # import class for annotations
+    "INP001",  # __init__.py in all modules
+    "UP046",   # only for py313 TypeVar->T
+    "COM812",  # , in multiline: not recommended by ruff
+    "PGH003",  # type: ignore for all
+    "D105",    # obvious annotations for __magic__ methods
+    "N806",    # up case variables
+    "ANN002",  # args annotation
+    "TRY003",  # long Exceptions
+    "D205",    # Short and log description in docstring
+    "FBT001",  # bool flags in functions
+    "FBT002",  # default bool flags in functions
+    "D107",    # docstring in __init__
+    "ANN003",  # annotations for kwargs
+    "E713",    # not a in b -> a not in b: naive parse code, unstable
+    "N805",    # cls->self in methods: unstable
+    "N811",    # import magic values: unstable (import .V as __version__)
+    "RUF022",  # comments in __all__
+    "ANN401",  # Any for __getitem__
+    "C408",    # dict(a=1) better then {'a':1}
+    "N815",    # camel-case vars (sometimes better then snake-case - parsing)
+    "N803",    # temperature/time=T/t, force/function=F/f better to understand
+    "ANN202",  # private type annotation
+    "ARG001",  # unused args: not works with wrappers
+    "S301",    # unsafe pickle
+    "S311",    # crypto random instead random
+    "S506",    # serialize/deserialize safe objects is not always needed
+    "PLC0105", # covariant TypeVar named T_co
+    "A002",    # shadowing
+    "N802",    # lowercase functions
+    "N801",    # UpCase classes
+    "SIM108",  # inline if statements
+    "S602",    # subprocess without shell=True
+    "S607",    # subprocess only with absolute paths
+    "G004",    # f strings in logs
+    "PLW0603", # global statements
+    "PIE790",  # unnecessary pass/...
+    "FURB187", # [::-1] -> reverse
+    "RUF012",  # mutable values in classes
+    "C901",    # hard functions
+    "PLR0912", # too many branches in if
+    "RET506",  # superfluous else after if: unstable
+    "SIM300",  # 0<a -> a>0
+    "RET503",  # explicit return
+    "C416",    # {:} -> dict
+    "S307",    # use eval
+    "UP040",   # type a = ... for p>=312
+    "RUF005",  # [] + [] -> [*[], *[]]
+    "TRY301",  # raise if
+    "N816",    # no mixed_Case
+    "PYI019",  # typevar -> Self
+
+]
+select = ["ALL"]
+fixable = [
+    "I", # import sort
+]
+exclude = ["pmx/**", "**.ipynb", "tests_md/**"]
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = [
+    "F401", # unused imports
+]
+"tests_md/**" = [
+    'N805',   # method name starts with UP case letter
+    'N802',   # function name starts with UP case letter
+    "F403",   # import *
+    "D103",   # docsting in tests
+    "ANN001", # mixture annotations
+    "F401",   # unused imports
+]
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+
+[tool.ruff.lint.flake8-quotes]
+avoid-escape = false
+
+[tool.ruff.flake8-annotations]
+suppress-none-returning = true
+mypy-init-return = true
+allow-star-arg-any = true
+ignore-fully-untyped = true
+
+[tool.pyright]
+include = ["md"]
+exclude = ["*/__init__.py"]
+typeCheckingMode = "standard"
+
+
+# FORMAT
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint.isort]
+known-first-party = ["md"]
+combine-as-imports = true
+force-sort-within-sections = true
