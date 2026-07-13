@@ -1,6 +1,8 @@
 # SiMDel
 
-**Si**mple **m**olecular **d**ynamics **e**xpandable **l**ibrary (Simdel) - a library for molecular dynamics.
+[Russian version](README.ru.md)
+
+**Si**mple **m**olecular **d**ynamics **e**xpandable **l**ibrary - a library for molecular dynamics.
 
 Setting up and running molecular dynamics simulations can be done entirely from Python. No file editing, no conversion to other formats - completely seamless molecular dynamics!
 
@@ -13,6 +15,8 @@ Setting up and running molecular dynamics simulations can be done entirely from 
 **Pure Functions:** All operations on the system are implemented as pure functions that return a new system. The only permitted side effect is the creation of folders for intermediate files. This design makes execution equally straightforward both locally and remotely.
 
 **Pipelines:** Individual functions are combined into pipeline stages. Each stage also has at most one side effect - the creation of a working directory.
+
+---
 
 ### Installation
 
@@ -68,7 +72,7 @@ _Required_
 
 Options:
 
-1. **UV** - soft install to avoid overwriting conda files
+1. **UV**
 
 ```bash
 uv pip install .
@@ -85,14 +89,12 @@ poetry install
 _**Usage**: FEP_
 
 > [!WARNING]
-> The original package is outdated. The only working solution right now is to install the pmx fork from this project:
+> The original package is outdated. The only working solution right now is to install the pmx fork from this project
 
 ```bash
 cd pmx
 pip install .
 ```
-
-## P.S.
 
 ## P.S.
 
