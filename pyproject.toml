@@ -116,7 +116,7 @@ allow-star-arg-any = true
 ignore-fully-untyped = true
 
 [tool.pyright]
-include = ["md"]
+include = ["simdel"]
 exclude = ["*/__init__.py"]
 typeCheckingMode = "standard"
 
@@ -129,6 +129,6 @@ docstring-code-format = true
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint.isort]
-known-first-party = ["md"]
+known-first-party = ["simdel"]
 combine-as-imports = true
 force-sort-within-sections = true

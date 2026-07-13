@@ -1,0 +1,1 @@
+"""Default collections for MD."""
