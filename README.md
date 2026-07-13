@@ -1,8 +1,8 @@
-# SiMDel
+# SiMDEL
 
 [Russian version](README.ru.md)
 
-**Si**mple **m**olecular **d**ynamics **e**xpandable **l**ibrary - a library for molecular dynamics.
+**Si**mple **M**olecular **D**ynamics **E**xpandable **L**ibrary - a library for molecular dynamics.
 
 Setting up and running molecular dynamics simulations can be done entirely from Python. No file editing, no conversion to other formats - completely seamless molecular dynamics!
 
@@ -25,6 +25,7 @@ The library requires several types of dependencies:
 - **Core**: _PyPi dependencies, GROMACS_
 - **Conda packages** - optional, Linux/WSL/Mac only. (_OpenFF parameterization, FEP transition graphs._ )
 - **PLUMED** - optional. (_Metadynamics_)
+- **PMX** - optional. (_FEP_)
 
 > [!IMPORTANT]
 >
@@ -34,23 +35,41 @@ The library requires several types of dependencies:
 
 #### 1. GROMACS
 
-_Required_
+_**Required:** MD engine_
 
 Options:
 
 1. **Regular without** PLUMED ([see documentation](https://manual.gromacs.org/documentation/current/install-guide/index.html))
 2. **Regular with** PLUMED ([PLUMED flag](https://manual.gromacs.org/documentation/current/install-guide/index.html#building-with-plumed-support))
+
+   > [!NOTE] Built command example
+   >
+   > ```bash
+   >  cmake .. \
+   > -DGMX_BUILD_OWN_FFTW=ON \
+   > -DREGRESSIONTEST_DOWNLOAD=ON \
+   > -DGMX_USE_PLUMED=ON # most important - PLUMED usage
+   > ```
+
 3. **Via conda** - no GPU support, cannot enable PLUMED: **see below**
 
 #### 2. PLUMED
 
-_**Usage**: metadynamics_
+_**Optional:** funnel and default metadynamics_
 
-GROMACS must be built with PLUMED enabled. Build from source - [PLUMED installation docs](https://www.plumed.org/doc-v2.9/user-doc/html/_installation.html)
+GROMACS must be built with PLUMED enabled. Build from source - [PLUMED installation docs](https://www.plumed.org/doc-v2.9/user-doc/html/_installation.html):
 
-#### 3. Conda Dependencies
+```bash
+cd plumed_dir
+./configure --enable-modules=all
+make -j 4
+make doc # this is optional and requires proper doxygen version installed
+make install
+```
 
-_**Usage**: OpenFF parameterization, transition graph construction for FEP_
+#### 3. Conda
+
+_**Optional:** OpenFF parameterization, transition graph construction for FEP_
 
 Only works on Linux/WSL/Mac.
 
@@ -66,9 +85,9 @@ Only works on Linux/WSL/Mac.
 > conda install gromacs
 > ```
 
-#### 4. Pip Dependencies
+#### 4. Pip
 
-_Required_
+_**Required:** basic classes and functions_
 
 Options:
 
@@ -84,9 +103,9 @@ uv pip install .
 poetry install
 ```
 
-### 5. PMX Package
+#### 5. PMX
 
-_**Usage**: FEP_
+_**Optional:** FEP_
 
 > [!WARNING]
 > The original package is outdated. The only working solution right now is to install the pmx fork from this project

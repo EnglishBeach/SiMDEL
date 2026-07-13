@@ -1,8 +1,8 @@
-# SiMDel
+# SiMDEL
 
 [Версия на анлийском](README.md)
 
-**Si**mple **m**olecular **d**ynamics **e**xpandable **l**ibrary - простая библиотека для молекулярной динамики.
+**Si**mple **M**olecular **D**ynamics **E**xpandable **L**ibrary - простая библиотека для молекулярной динамики.
 
 Позволяет выполнять подготовку и расчет молекулярной динамики напрямую из Python. Не требует редактирования файлов или конвертации в другие форматы - полностью бесшовная молекулярная динамика!
 
@@ -20,7 +20,13 @@
 
 ### Установка
 
-Библиотека требует нескольких типов зависимостей: PyPi, conda, GROMACS, PLUMED. Можно установить не все, тогда часть библиотеки будет неактивна.
+Библиотека требует нескольких типов зависимостей. Можно установить не все, тогда часть библиотеки будет неактивна:
+
+- **Pip пакеты** - обязательно. (ядро)
+- **GROMACS** - обязательно. (МД движок)
+- **Conda пакеты** - необязательно. (_OpenFF,lomap_ )
+- **PLUMED плагин** - необязательно. (_Метадинамика_)
+- **PMX** - необязательно. (_FEP_)
 
 > [!IMPORTANT]
 >
@@ -30,23 +36,39 @@
 
 #### 1. GROMACS
 
-_Обязательно_
+_**Обязательно:** основной (и единственный пока что) МД-движок_
 
 Варианты:
 
 1.  **Обычная без** PLUMED ([см. документацию](https://manual.gromacs.org/documentation/current/install-guide/index.html))
 2.  **Обычная c** PLUMED ([PLUMED флаг](https://manual.gromacs.org/documentation/current/install-guide/index.html#building-with-plumed-support))
+    > [!NOTE] Пример команды сборки
+    >
+    > ```bash
+    >  cmake .. \
+    > -DGMX_BUILD_OWN_FFTW=ON \
+    > -DREGRESSIONTEST_DOWNLOAD=ON \
+    > -DGMX_USE_PLUMED=ON # most important - PLUMED usage
+    > ```
 3.  **Через conda** - нет поддержки GPU, невозможно подключить PLUMED: **см ниже**
 
 #### 2. PLUMED
 
-_**Применение**: метадинамика_
+_**Необязательно:** вороночная и обычная метадинамика_
 
-Нужно собрать GROMACS под использование PLUMED! Сборка из исходников - [см. документацию](https://www.plumed.org/doc-v2.9/user-doc/html/_installation.html)
+Нужно собрать GROMACS под использование PLUMED! Сборка из исходников - [см. документацию](https://www.plumed.org/doc-v2.9/user-doc/html/_installation.html):
 
-#### 3. Сonda зависимости
+```bash
+cd plumed_dir
+./configure --enable-modules=all
+make -j 4
+make doc # this is optional and requires proper doxygen version installed
+make install
+```
 
-_**Применение**: openff параметризация, построение графа переходов для FEP_
+#### 3. Сonda
+
+_**Необязательно:** OpenFF параметризация,lomap построение графа переходов для FEP_
 
 Работает только на Linux/WSL/Mac.
 
@@ -62,9 +84,9 @@ _**Применение**: openff параметризация, построен
 >  conda install gromacs
 > ```
 
-#### 4. Pip зависимости
+#### 4. Pip
 
-_Обязательно_
+_**Обязательно:** основные функции и классы_
 
 Варианты:
 
@@ -80,9 +102,9 @@ uv pip install .
 poetry install
 ```
 
-### 5. PMX пакет
+#### 5. PMX
 
-_**Применение**: FEP_
+_**Необязательно:** FEP_
 
 > [!WARNING]
 > Оригинальный пакет устарел. Единственный рабочий путь сейчас — установить форк pmx из этого проекта
