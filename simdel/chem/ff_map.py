@@ -175,6 +175,7 @@ class Ion(BaseModel):
     """Ion charge."""
 
 
+# TODO: split to gromacs openff
 class DefaultFF:
     """Default forcefield types."""
 
