@@ -1,7 +1,7 @@
 [project]
 name = "simdel"
 version = "0.0.0"
-description = "Coming soon. SImple Molecular Dynamics Expandable Library - easy to start MD library"
+description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
 
 readme = "README.md"
