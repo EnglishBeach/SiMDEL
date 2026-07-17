@@ -3,7 +3,6 @@ name = "simdel"
 version = "0.0.0"
 description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
-
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -95,7 +94,7 @@ select = ["ALL"]
 fixable = [
     "I", # import sort
 ]
-exclude = ["pmx/**", "**.ipynb", "tests_md/**"]
+exclude = ["libs/**", "**.ipynb", "tests_md/**"]
 
 
 [tool.ruff.lint.pydocstyle]
@@ -127,7 +126,7 @@ allow-star-arg-any = true
 ignore-fully-untyped = true
 
 [tool.pyright]
-include = ["simdel"]
+include = ["src"]
 exclude = ["*/__init__.py"]
 typeCheckingMode = "standard"
 
@@ -150,7 +149,7 @@ version = "0.0.0"
 description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = ["Ilya Krainov", "Danila Iakovlev"]
 readme = "README.md"
-packages = [{ include = "simdel" }]
+packages = [{ include = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11.0"
