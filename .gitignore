@@ -52,21 +52,21 @@ nosetests.xml
 coverage.xml
 *.cover
 
-# # Documentation
-# *.mo
-# *.pot
-# docs/_build/
+# Documentation
+*.mo
+*.pot
+docs/_build/
 
-# # Environments
-# .*env
-# env.bak/
-# venv.bak/
+# Environments
+.*env
+env.bak/
+venv.bak/
 
-# # pytype static type analyzer
-# .pytype/
-# .mypy_cache/
-# .dmypy.json
-# dmypy.json
+# pytype static type analyzer
+.pytype/
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# # Data
-# temp*
+# Data
+temp*

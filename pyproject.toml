@@ -6,7 +6,17 @@ authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
 
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "frozendict>=2.4.7",
+    "jupyter",
+    "matplotlib",
+    "mdtraj",
+    "pandas",
+    # "plumed",
+    "pydantic",
+    "rdkit",
+    "scipy",
+]
 
 
 # LINT
@@ -16,6 +26,7 @@ line-length = 100
 
 [tool.ruff.lint]
 ignore = [
+    "SIM105",  # try/except->context
     "EXE002",  # shebang
     "RUF104",  # ruff: enable
     "ERA001",  # commentary, switch
@@ -109,7 +120,7 @@ strict = true
 [tool.ruff.lint.flake8-quotes]
 avoid-escape = false
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 suppress-none-returning = true
 mypy-init-return = true
 allow-star-arg-any = true
@@ -132,3 +143,32 @@ skip-magic-trailing-comma = false
 known-first-party = ["simdel"]
 combine-as-imports = true
 force-sort-within-sections = true
+
+[tool.poetry]
+name = "simdel"
+version = "0.0.0"
+description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
+authors = ["Ilya Krainov", "Danila Iakovlev"]
+readme = "README.md"
+packages = [{ include = "simdel" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11.0"
+frozendict = ">=2.4.7"
+jupyter = ">=1.1.1"
+matplotlib = ">=3.10.8"
+mdtraj = ">=1.10.3"
+pandas = ">=2.3.3"
+# plumed = ">=2.10.0"
+pydantic = ">=2.12.5"
+rdkit = ">=2024.3.1"
+scipy = ">=1.15.3"
+parmed = ">=4.3.0"
+pygraphviz = ">=1.14"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=9.0.3"
+ruff = '>=0.15.16'
+pytest-xdist = "*"
+pytest-html = "*"
