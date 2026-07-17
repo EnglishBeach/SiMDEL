@@ -12,7 +12,7 @@ dependencies = [
     "matplotlib",
     "mdtraj",
     "pandas",
-    "plumed",
+    # "plumed",
     "pydantic",
     "rdkit",
     "scipy",
@@ -149,7 +149,7 @@ version = "0.0.0"
 description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = ["Ilya Krainov", "Danila Iakovlev"]
 readme = "README.md"
-packages = [{ include = "md" }]
+packages = [{ include = "simdel" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11.0"
@@ -158,7 +158,7 @@ jupyter = ">=1.1.1"
 matplotlib = ">=3.10.8"
 mdtraj = ">=1.10.3"
 pandas = ">=2.3.3"
-plumed = ">=2.10.0"
+# plumed = ">=2.10.0"
 pydantic = ">=2.12.5"
 rdkit = ">=2024.3.1"
 scipy = ">=1.15.3"
