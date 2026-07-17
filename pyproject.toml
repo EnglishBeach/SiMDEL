@@ -26,6 +26,7 @@ line-length = 100
 
 [tool.ruff.lint]
 ignore = [
+    "SIM105",  # try/except->context
     "EXE002",  # shebang
     "RUF104",  # ruff: enable
     "ERA001",  # commentary, switch
