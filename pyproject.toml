@@ -127,7 +127,7 @@ ignore-fully-untyped = true
 
 [tool.pyright]
 include = ["src"]
-exclude = ["*/__init__.py"]
+exclude = ["*/__init__.py", "**/__pycache__", "**/node_modules", ".*", ".venv"]
 typeCheckingMode = "standard"
 
 
