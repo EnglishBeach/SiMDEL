@@ -1,6 +1,6 @@
 # SiMDEL
 
-[Версия на анлийском](README.md)
+[Версия на анлийском](../README.md)
 
 **Si**mple **M**olecular **D**ynamics **E**xpandable **L**ibrary - простая библиотека для молекулярной динамики.
 

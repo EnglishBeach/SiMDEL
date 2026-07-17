@@ -1,6 +1,6 @@
 # SiMDEL
 
-[Russian version](README.ru.md)
+[Russian version](documentation/README.ru.md)
 
 **Si**mple **M**olecular **D**ynamics **E**xpandable **L**ibrary - a library for molecular dynamics.
 
