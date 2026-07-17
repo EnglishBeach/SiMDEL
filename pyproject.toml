@@ -119,7 +119,7 @@ strict = true
 [tool.ruff.lint.flake8-quotes]
 avoid-escape = false
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 suppress-none-returning = true
 mypy-init-return = true
 allow-star-arg-any = true

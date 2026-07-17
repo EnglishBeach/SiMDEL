@@ -13,7 +13,6 @@ import matplotlib.patches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import plumed
 from pydantic import BaseModel
 from scipy import interpolate
 
@@ -587,6 +586,8 @@ def analyze_meta(  # noqa: PLR0913
     funnel: chem.Funnel,
     fast: bool = False,
 ) -> AnalyzeMetaOut:
+    import plumed
+
     max_stride = 500
     rtol = 0.3
     min_points = 2
