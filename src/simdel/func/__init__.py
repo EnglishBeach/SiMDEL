@@ -1,7 +1,7 @@
 """System assembly and manipulation functions."""
 
 from .alchemy import create_hybrids, gen_alchemy_graph
-from .converters import dump_index, gro2pdb, load_index, pdb2gro, split_sdf
+from .converters import dump_index, gro2pdb, load_index, pdb2gro, read_plumed, split_sdf
 from .geometry_transform import (
     axial_align,
     create_box,

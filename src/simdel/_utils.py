@@ -177,11 +177,11 @@ def run(title: str, command: list[str], workdir: Path | None = None):
 
 
 def require(*modules):
-    """Require wrapper modules."""
+    """Mark function/class to depends on wrapper modules."""
 
     def require_middle(f):
         error = False
-        module_names = " ".join(module.__name__.split(".")[-1] for module in modules)
+        module_names = " ".join(f"simdel[{module.__name__.split('.')[-1]}]" for module in modules)
 
         if isinstance(f, Callable):
 
@@ -205,16 +205,19 @@ def require(*modules):
                 nonlocal error
                 error = error or _check_modules(modules)
                 if isinstance(error, str):
-                    raise ImportError(error)
+                    raise ImportError(error)  # noqa: TRY004
 
                 return original_init(*args, **kwargs)
 
             _new_init.__doc__ = f"Require groups: {module_names}\n{_new_init.__doc__}"
             f.__init__ = _new_init
             return f
+        msg = "Require decorator only for functions and classes"
+        raise TypeError(msg)
 
-        raise TypeError("Require decorator: only for functions and classes")
-
+    if not all(i.__name__.startswith("simdel._wrappers") for i in modules):
+        msg = "Only simdel._wrapper modules would be required."
+        raise ModuleNotFoundError(msg)
     return require_middle
 
 

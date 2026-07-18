@@ -10,7 +10,7 @@ from rdkit import Chem as rdChem
 
 from simdel import _utils
 from simdel._parsers import index_parser
-from simdel._wrappers import gmx
+from simdel._wrappers import gmx, plumed
 
 
 @_utils.require(gmx)
@@ -106,3 +106,14 @@ def load_index(index_file: Path, n_atoms: int) -> dict[str, pd.Series[bool]]:
     :return: Index dict {str, mask}
     """
     return index_parser.parse_index(index=index_file, n_atoms=n_atoms)
+
+
+def read_plumed(
+    fes: Path,
+) -> pd.DataFrame:
+    """Read FES .dat file.
+
+    :param fes: FES .dat file
+    :return: pandas.DataFrame with additional plumed fields
+    """
+    return plumed.parse_plumed(fes)[0]

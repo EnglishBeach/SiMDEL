@@ -585,16 +585,15 @@ def analyze_meta(  # noqa: PLR0913
     funnel: chem.Funnel,
     fast: bool = False,
 ) -> AnalyzeMetaOut:
-    import plumed
 
     max_stride = 500
     rtol = 0.3
     min_points = 2
     workdir.mkdir(parents=True, exist_ok=True)
 
-    cv_df = plumed.read_as_pandas(cv_file.as_posix())
-    hills_df = plumed.read_as_pandas(hills_file.as_posix())
-    funnel_df = plumed.read_as_pandas(funnel_file.as_posix())
+    cv_df = func.read_plumed(cv_file)
+    hills_df = func.read_plumed(hills_file)
+    funnel_df = func.read_plumed(funnel_file)
 
     stride = 500 if len(hills_df) > max_stride else 1
 
@@ -645,7 +644,9 @@ def analyze_meta(  # noqa: PLR0913
     plateau_mask = t >= t_plateau if sum(t >= t_plateau) > min_points else t > 0
     dG_std = dG[plateau_mask].std()
 
-    transitions_count = analyse.calculate_hysteresis_transitions(cv_df["fps.lp"] - funnel.cone_h)
+    transitions_count = analyse.calculate_hysteresis_transitions(
+        (cv_df["fps.lp"] - funnel.cone_h).to_numpy()
+    )
     transitions_frequency = transitions_count / t[-1]
 
     # The fraction of a convergent trajectory
@@ -716,8 +717,8 @@ def analyze_meta(  # noqa: PLR0913
     )
     _hills_plot(
         ax=ax_hills,
-        time=hills_df["time"] / 1000,
-        hills=hills_df["height"],
+        time=hills_df["time"].to_numpy() / 1000,
+        hills=hills_df["height"].to_numpy(),
     )
     fig.tight_layout()
     plt.close()

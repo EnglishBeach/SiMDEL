@@ -59,13 +59,14 @@ class FES(pydantic.BaseModel, arbitrary_types_allowed=True):
         :param time: Time. In `ns`
         :return FES: Free energy surface object
         """
-        df = plumed.read_fes(fes)
+        df, plumed_data = plumed.parse_plumed(fes)
+        df = df.rename(columns={"file.free": "free"})
         cv_data_ = collections.defaultdict(dict)
 
-        for var, value_, _ in df.plumed_constants:
-            property_, cv = var.split("_")
-            value = value_.replace("pi", "3.141592654") if "pi" in str(value_) else value_
-            cv_data_[cv][property_] = value
+        for var, val in plumed_data:
+            prop, cv = var.split("_")
+            value = str(val).replace("pi", "3.141592654") if "pi" in str(val) else val
+            cv_data_[cv][prop] = value
 
         return FES(
             time=time,

@@ -251,7 +251,7 @@ class FunnelSplit(run.Pipeline, SimulationParameters):
         df.to_csv(workdir / "result.csv")
 
         result = []
-        for label, g_df in df.groupby(by="LABEL"):
+        for _, g_df in df.groupby(by="LABEL"):
             dG = g_df["dG"].mean()
             # TODO: bootstrap
             dG_error = g_df["dG_error"].mean()

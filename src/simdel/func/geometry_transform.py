@@ -66,7 +66,7 @@ def axial_align(
     vec = np.array((-vector[1] / vector[0], 1, 0))
     vec = vec / np.linalg.norm(vec)
 
-    vec2 = np.cross(vector, vec)
+    vec2 = np.cross(vector, vec)  # type: ignore
 
     basis = [vec, vec2]
     basis.insert(axis, vector)

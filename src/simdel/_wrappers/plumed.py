@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pandas as pd
 import plumed as plumed_adapter
 
 from simdel import _utils
@@ -11,14 +12,20 @@ from simdel import _utils
 _utils.run("plumed check", ["plumed"])
 
 
-# TODO: type
-def read_fes(fes: Path):  # noqa: ANN201
+def parse_plumed(
+    fes: Path,
+) -> tuple[
+    pd.DataFrame,
+    list[tuple[str, str | float | int]],
+]:
     """Read FES .dat file.
 
     :param fes: FES .dat file
     :return: pandas.DataFrame with additional plumed fields
     """
-    return plumed_adapter.read_as_pandas(fes.as_posix()).rename(columns={"file.free": "free"})
+    data = plumed_adapter.read_as_pandas(fes.as_posix())
+    constants = [(key, value) for key, value, _ in data.plumed_constants]
+    return (pd.DataFrame(data), constants)
 
 
 def plumed_driver(
