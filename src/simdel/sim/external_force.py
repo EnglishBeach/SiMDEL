@@ -5,12 +5,12 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
 
-class GroupNonEquilibriumMD(pydantic.BaseModel):
+class GroupNonEquilibriumMD(BaseModel):
     """Using acceleration to atom groups."""
 
     acc_grps: list[str] = []
@@ -49,7 +49,7 @@ class GroupNonEquilibriumMD(pydantic.BaseModel):
     - ACTIVE IF `deform` is on"""
 
 
-class GroupElectricFields(pydantic.BaseModel):
+class GroupElectricFields(BaseModel):
     """Modifying forcefield."""
 
     electric_field_x: str | None = None
@@ -78,7 +78,7 @@ class Swapcoords(enum.Enum):
     """Allow for ion/water position exchanges along x direction."""
 
 
-class GroupComputationalElectrophysiology(pydantic.BaseModel):
+class GroupComputationalElectrophysiology(BaseModel):
     """Computational Electrophysiology simulation parameters."""
 
     # TODO: default (may be No)
@@ -201,7 +201,7 @@ class DensityGuidedSimulationAtomSpreadingWeight(enum.Enum):
     """Atoms contribute to the simulated density proportional to their charge."""
 
 
-class GroupDensityGuidedSimulations(pydantic.BaseModel):
+class GroupDensityGuidedSimulations(BaseModel):
     """Additional forces that are derived from three-dimensional densities parameters."""
 
     density_guided_simulation_active: core_mdp.bool_yn | None = None

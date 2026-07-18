@@ -4,7 +4,7 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
@@ -81,7 +81,7 @@ class TCoupl(enum.Enum):
     - `ld-seed` - random seed"""
 
 
-class GroupTemperatureCoupling(pydantic.BaseModel):
+class GroupTemperatureCoupling(BaseModel):
     """Temperature coupling parameters."""
 
     ensemble_temperature_setting: EnsembleTemperatureSetting | None = None
@@ -207,7 +207,7 @@ class RefCoordScaling(enum.Enum):
     the scaling matrix of the pressure coupling."""
 
 
-class GroupPressureCoupling(pydantic.BaseModel):
+class GroupPressureCoupling(BaseModel):
     """Pressure coupling parameters."""
 
     pcoupl: PCoupl | None = None
@@ -253,7 +253,7 @@ class Annealing(enum.Enum):
     the last reference time is reached. Repeated until the simulation ends."""
 
 
-class GroupAnnealing(pydantic.BaseModel):
+class GroupAnnealing(BaseModel):
     """Annealing parameters.
 
     For example:
@@ -288,7 +288,7 @@ class GroupAnnealing(pydantic.BaseModel):
     len(`annealing_time`) = len(`annealing_npoints`), in `K`. ([])"""
 
 
-class GroupVelocityGeneration(pydantic.BaseModel):
+class GroupVelocityGeneration(BaseModel):
     """Generate velocities parameters."""
 
     gen_vel: core_mdp.bool_yn | None = None

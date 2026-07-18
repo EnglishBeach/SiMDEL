@@ -4,7 +4,7 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
@@ -55,7 +55,7 @@ class ConstraintAlgorithm(enum.Enum):
      - `shake_tol` - relative tolerance"""
 
 
-class GroupBonds(pydantic.BaseModel):
+class GroupBonds(BaseModel):
     """Constraints parameters."""
 
     constraints: Constraints | None = None
@@ -104,7 +104,7 @@ class WallType(enum.Enum):
     """Direct LJ potential with the z distance from the wall."""
 
 
-class GroupWalls(pydantic.BaseModel):
+class GroupWalls(BaseModel):
     """Walls set parameters."""
 
     nwall: int | None = None
@@ -239,7 +239,7 @@ class PullCoordGeometry(enum.Enum):
     `pull_coord1_expression` - mathematical expression"""
 
 
-class GroupCOMPulling(pydantic.BaseModel):
+class GroupCOMPulling(BaseModel):
     """Center of mass pulling parameters."""
 
     pull: core_mdp.bool_yn | None = None
@@ -440,7 +440,7 @@ class RotFitMethod(enum.Enum):
     Potential = "potential"
 
 
-class GroupEnforcedRotation(pydantic.BaseModel):
+class GroupEnforcedRotation(BaseModel):
     """Enforced rotation parameters
     Parameters for enforcing rotation on specific groups of atoms
     using various rotation types and fitting methods.

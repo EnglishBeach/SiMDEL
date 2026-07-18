@@ -8,7 +8,7 @@ import shutil
 
 import numpy as np
 import pandas as pd
-import pydantic
+from pydantic import BaseModel
 
 from simdel import _utils
 from simdel._wrappers import plumed
@@ -17,7 +17,7 @@ R: float = 8.314
 """Ideal Gas Constant, in `J/(mol K)`."""
 
 
-class CVData(pydantic.BaseModel):
+class CVData(BaseModel):
     """CV data."""
 
     min: float
@@ -39,7 +39,7 @@ class CVData(pydantic.BaseModel):
 
 
 @_utils.require(plumed)
-class FES(pydantic.BaseModel, arbitrary_types_allowed=True):
+class FES(BaseModel, arbitrary_types_allowed=True):
     """Free energy space in time."""
 
     df: pd.DataFrame

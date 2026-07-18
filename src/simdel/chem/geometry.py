@@ -7,8 +7,7 @@ import json
 
 import numpy as np
 import pandas as pd
-import pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from simdel import _utils
 from simdel._parsers import gro_parser
@@ -38,7 +37,7 @@ class Geometry(BaseModel, frozen=True, arbitrary_types_allowed=True):
     coordinates: Coordinates
     """Atom coordinates."""
 
-    @pydantic.model_validator(mode="after")
+    @model_validator(mode="after")
     def _validate_box(self):
         """Validate box parameters.
 

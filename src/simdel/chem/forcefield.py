@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pandas as pd
-import pydantic
+from pydantic import BaseModel
 
 from simdel import _log, _utils
 from simdel._parsers import top_parser
@@ -248,7 +248,7 @@ class Cmaptypes(_utils.Table):
     """Parameters list."""
 
 
-class Forcefield(pydantic.BaseModel, frozen=True, arbitrary_types_allowed=True):
+class Forcefield(BaseModel, frozen=True, arbitrary_types_allowed=True):
     """System forcefield - general interaction parameters for atoms, bonds..."""
 
     defaults: Defaults

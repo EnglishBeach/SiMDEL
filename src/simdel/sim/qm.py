@@ -4,12 +4,12 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
 
-class GroupQMMM(pydantic.BaseModel):
+class GroupQMMM(BaseModel):
     """Quantum mechanics molecular dynamics parameters groups."""
 
     QMMM_groups: list[str] = []
@@ -31,7 +31,7 @@ class QMMMCp2kQmmethod(enum.Enum):
     ACTIVE IF  gmx grompp -qmi"""
 
 
-class GroupQMMMCp2K(pydantic.BaseModel):
+class GroupQMMMCp2K(BaseModel):
     """Hybrid Quantum-Classical simulations (QM/MM) with CP2K interface parameters."""
 
     qmmm_cp2k_active: core_mdp.bool_tf | None = None

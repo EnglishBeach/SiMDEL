@@ -5,7 +5,7 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
@@ -117,7 +117,7 @@ class MTSForce(enum.Enum):
     Awh = "awh"
 
 
-class GroupRunControl(pydantic.BaseModel):
+class GroupRunControl(BaseModel):
     """Time integration/energy minimization parameters."""
 
     integrator: Integrator
@@ -149,7 +149,7 @@ class GroupRunControl(pydantic.BaseModel):
     """A simulation can consist of multiple parts, each of which has a part number. (1)"""
 
 
-class GroupMultiTimeStepping(pydantic.BaseModel):
+class GroupMultiTimeStepping(BaseModel):
     """Multiple timing-stepping integrator parameters."""
 
     mts: core_mdp.bool_yn | None = None
@@ -203,7 +203,7 @@ class CommMode(enum.Enum):
     """No restriction on the center of mass motion."""
 
 
-class GroupMotionRemove(pydantic.BaseModel):
+class GroupMotionRemove(BaseModel):
     """Correct velocities to remove all system moving."""
 
     comm_mode: CommMode | None = None
@@ -218,7 +218,7 @@ class GroupMotionRemove(pydantic.BaseModel):
     - [] => all system"""
 
 
-class GroupLangevinDynamics(pydantic.BaseModel):
+class GroupLangevinDynamics(BaseModel):
     """Langevin integration parameters."""
 
     bd_fric: float | None = None
@@ -232,7 +232,7 @@ class GroupLangevinDynamics(pydantic.BaseModel):
     - `= -1` => random seed"""
 
 
-class GroupEnergyMinimization(pydantic.BaseModel):
+class GroupEnergyMinimization(BaseModel):
     """Parameters only for energy minimization."""
 
     emtol: float | None = None
@@ -250,7 +250,7 @@ class GroupEnergyMinimization(pydantic.BaseModel):
     """
 
 
-class GroupShell(pydantic.BaseModel):
+class GroupShell(BaseModel):
     """Energy minimization for shell or flexible constraints."""
 
     niter: int | None = None
@@ -265,14 +265,14 @@ class GroupShell(pydantic.BaseModel):
     d2V/dq2 - derivative of the potential in the constraint direction"""
 
 
-class GroupParticleInsertion(pydantic.BaseModel):
+class GroupParticleInsertion(BaseModel):
     """Parameter for test particle insertion simulations."""
 
     rtpi: float | None = None
     """The test particle insertion radius, in `nm`. (0.05)"""
 
 
-class GroupOutControl(pydantic.BaseModel):
+class GroupOutControl(BaseModel):
     """Output parameters."""
 
     nstxout: int | None = None

@@ -5,7 +5,7 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
@@ -34,7 +34,7 @@ class PBC(enum.Enum):
     can be used in combination with walls"""
 
 
-class GroupNeighborSearching(pydantic.BaseModel):
+class GroupNeighborSearching(BaseModel):
     """Nonbonded interactions detecting buffer parameters."""
 
     cutoff_scheme: CutoffScheme | None = None
@@ -131,7 +131,7 @@ class CoulombModifier(enum.Enum):
     """Use an unmodified Coulomb potential."""
 
 
-class GroupElectrostatics(pydantic.BaseModel):
+class GroupElectrostatics(BaseModel):
     """Coulomb interaction parameters."""
 
     coulombtype: CoulombType | None = None
@@ -220,7 +220,7 @@ class DispCorr(enum.Enum):
     """Apply long range dispersion corrections for Energy only."""
 
 
-class GroupVanDerWaals(pydantic.BaseModel):
+class GroupVanDerWaals(BaseModel):
     """Van der Waals interaction parameters."""
 
     vdw_type: VDWType | None = None
@@ -240,7 +240,7 @@ class GroupVanDerWaals(pydantic.BaseModel):
     """Dispersion correction type. (NO)"""
 
 
-class GroupTables(pydantic.BaseModel):
+class GroupTables(BaseModel):
     """Table parameters."""
 
     table_extension: float | None = None
@@ -271,7 +271,7 @@ class EwaldGeometry(enum.Enum):
     (a box height of 3 times the slab height is usually ok)."""
 
 
-class GroupPotentialMesh(pydantic.BaseModel):
+class GroupPotentialMesh(BaseModel):
     """Potential calculation in space parameters."""
 
     fourierspacing: float | None = None

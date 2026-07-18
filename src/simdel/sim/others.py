@@ -4,7 +4,7 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
@@ -45,7 +45,7 @@ class NMRDihedralConstraintMethod(enum.Enum):
     """Harmonic potential."""
 
 
-class GroupNMRRefinement(pydantic.BaseModel):
+class GroupNMRRefinement(BaseModel):
     """NMR refinement parameters
     Parameters for NMR structure refinement using distance, dihedral,
     and other constraints derived from NMR experimental data.
@@ -100,7 +100,7 @@ class GroupNMRRefinement(pydantic.BaseModel):
     for all restraints, in `steps`. (100)"""
 
 
-class GroupColVars(pydantic.BaseModel):
+class GroupColVars(BaseModel):
     """Collective variables module parameters."""
 
     colvars_active: core_mdp.bool_tf | None = None

@@ -5,7 +5,7 @@ See documentation: https://manual.gromacs.org/current/user-guide/mdp-options.htm
 
 import enum
 
-import pydantic
+from pydantic import BaseModel
 
 from . import core_mdp
 
@@ -107,7 +107,7 @@ class AWHDimCoordProvider(enum.Enum):
     - ACTIVE IF `delta_lambda` is off and `awh_potential` = `Umbrella`"""
 
 
-class GroupAWH(pydantic.BaseModel):
+class GroupAWH(BaseModel):
     """Adaptive biasing parameters
     Parameters for accelerated weight histogram (AWH) method used for
     free energy calculations and enhanced sampling.
@@ -260,7 +260,7 @@ class FreeEnergy(enum.Enum):
     allowing jumping between different Hamiltonians."""
 
 
-class GroupFreeEnergy(pydantic.BaseModel):
+class GroupFreeEnergy(BaseModel):
     """Free energy parameters."""
 
     free_energy: FreeEnergy | None = None
@@ -352,7 +352,7 @@ class ScFunction(enum.Enum):
     """Gapsys soft-core function."""
 
 
-class GroupSoftFunction(pydantic.BaseModel):
+class GroupSoftFunction(BaseModel):
     """Soft-core function parameters."""
 
     sc_function: ScFunction | None = None
@@ -424,7 +424,7 @@ class CoupleLambda(enum.Enum):
     - ACTIVE IF use soft-core interactions"""
 
 
-class GroupFreeEnergyCouple(pydantic.BaseModel):
+class GroupFreeEnergyCouple(BaseModel):
     """Coupling for free energy calculation parameters."""
 
     couple_moltype: str | None = None
@@ -468,7 +468,7 @@ class DHDLPrintEnergy(enum.Enum):
     """Write total energy in dhdl file."""
 
 
-class GroupDHDL(pydantic.BaseModel):
+class GroupDHDL(BaseModel):
     """Writing dH/dl parameters."""
 
     nstdhdl: int | None = None
@@ -590,7 +590,7 @@ class LMXWeightsEquil(enum.Enum):
     most sampled lambda state > this value."""
 
 
-class GroupExpandedEnsembleCalculations(pydantic.BaseModel):
+class GroupExpandedEnsembleCalculations(BaseModel):
     """Coordinates and the thermodynamic ensemble are treated as configuration variables
     that can be sampled over.
     """
@@ -700,7 +700,7 @@ class SimulatedTemperingScaling(enum.Enum):
     """Interpolates temperatures exponentially between sim-temp-low and sim-temp-high."""
 
 
-class GroupSimulatedTempering(pydantic.BaseModel):
+class GroupSimulatedTempering(BaseModel):
     """Simulated tempering parameters groups."""
 
     simulated_tempering: core_mdp.bool_yn | None = None
