@@ -62,6 +62,7 @@ class SimulationParameters(BaseModel, arbitrary_types_allowed=True):
     """Time to run NPT simulation in `ns`"""
 
 
+@core.mark_pipeline
 class FunnelSimple(run.Pipeline, SimulationParameters):
     """Metadynamics local pipeline."""
 

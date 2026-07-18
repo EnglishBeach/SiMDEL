@@ -86,6 +86,7 @@ class ReplicaResult(BaseModel):
     """Error stability"""
 
 
+@core.mark_pipeline
 class FunnelSplit(run.Pipeline, SimulationParameters):
     """Metadynamics local pipeline."""
 

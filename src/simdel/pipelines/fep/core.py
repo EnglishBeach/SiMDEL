@@ -11,9 +11,12 @@ import pandas as pd
 from pydantic import BaseModel
 
 from simdel import _utils, analyse, chem, func, traj
+from simdel._wrappers import gmx, openff, pmx
 from simdel.chem import DefaultFF, DefaultIon
 
 from . import configs
+
+mark_pipeline = _utils.require(pmx, gmx, openff)
 
 
 class StateName:

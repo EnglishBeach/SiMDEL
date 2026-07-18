@@ -17,57 +17,17 @@ from pydantic import BaseModel
 from scipy import interpolate
 
 from simdel import _log, _utils, analyse, chem, func, traj
+from simdel._wrappers import gmx, openff, plumed
 from simdel.pipelines import selections
 
 from . import configs
 
-
-class SiteResidue(BaseModel):
-    chain: str
-    residue_id: int
-    residue_name: str
+mark_pipeline = _utils.require(plumed, gmx, openff)
 
 
 class PipelineResult(_utils.Table):
     dG: pd.Series[float]
     dG_error: pd.Series[float]
-
-
-class MetadynamicsOut(BaseModel):
-    cv: Path
-    """CV .dat file path"""
-
-    hills: Path
-    """Hills .dat file path."""
-
-    funnel: Path
-    """Funnel potential .dat file path."""
-
-
-class AnalyzeMetaOut(BaseModel):
-    dG: float
-    """Mean dG, in `kJ/mol`."""
-
-    dG_error: float
-    """Block standard error of the mean (BSE), in `kJ/mol`."""
-
-    error_stable: bool
-    """SEM stability."""
-
-    dG_std: float
-    """Standard error of dG. Not good for time series, in `kJ/mol`."""
-
-    transitions_count: int
-    """Transitions bind <-> unbind states."""
-
-    transitions_frequency: float
-    """Transitions bind <-> unbind states frequency, in `1/ps`."""
-
-    convergence_rate: float
-    """Stable mean dG plateau proportion."""
-
-    v_convergence: float
-    """Velocity of reach the plateau, in `1/ps`."""
 
 
 def parametrize_protein(
@@ -244,6 +204,12 @@ def create_box(  # noqa: PLR0913
         shutil.rmtree(temp_index)
         _utils.clear_backups(workdir)
     return indexed_box
+
+
+class SiteResidue(BaseModel):
+    chain: str
+    residue_id: int
+    residue_name: str
 
 
 def site_search(
@@ -504,6 +470,17 @@ def create_funnels(
     return funnels
 
 
+class MetadynamicsOut(BaseModel):
+    cv: Path
+    """CV .dat file path"""
+
+    hills: Path
+    """Hills .dat file path."""
+
+    funnel: Path
+    """Funnel potential .dat file path."""
+
+
 # TODO: refactor
 # TODO: -> none
 def metadynamics(  # noqa: PLR0913
@@ -573,6 +550,32 @@ def metadynamics(  # noqa: PLR0913
     msg = "All trials are failed"
     _log.warning(msg)
     return None
+
+
+class AnalyzeMetaOut(BaseModel):
+    dG: float
+    """Mean dG, in `kJ/mol`."""
+
+    dG_error: float
+    """Block standard error of the mean (BSE), in `kJ/mol`."""
+
+    error_stable: bool
+    """SEM stability."""
+
+    dG_std: float
+    """Standard error of dG. Not good for time series, in `kJ/mol`."""
+
+    transitions_count: int
+    """Transitions bind <-> unbind states."""
+
+    transitions_frequency: float
+    """Transitions bind <-> unbind states frequency, in `1/ps`."""
+
+    convergence_rate: float
+    """Stable mean dG plateau proportion."""
+
+    v_convergence: float
+    """Velocity of reach the plateau, in `1/ps`."""
 
 
 # TODO: refactor

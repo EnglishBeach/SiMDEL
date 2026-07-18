@@ -92,6 +92,7 @@ class ReplicaResult(BaseModel):
     """dG(pLa) - dG(pLb) bootstrap error in `kJ^2/mol^2`"""
 
 
+@core.mark_pipeline
 class FEP(run.Pipeline, SimulationParameters):
     """FEP local pipeline."""
 
