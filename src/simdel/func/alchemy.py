@@ -7,7 +7,7 @@ import shutil
 
 # import lomap
 from simdel import _utils, chem
-from simdel._wrappers import gromacs, pmx
+from simdel._wrappers import gmx, pmx
 
 from . import converters
 
@@ -67,7 +67,7 @@ def create_hybrids(
         ff_b=ffB,
         pair_ab=align_files.pair_ab,
     )
-    geo_a = gromacs.editconf(
+    geo_a = gmx.editconf(
         workdir=hybrids_dir,
         geometry=hybrid_files.geometry_a,
         out_fname=f"{hybrid_files.geometry_a.stem}.gro",
@@ -82,7 +82,7 @@ def create_hybrids(
         .rename(system_a.name)
     )
 
-    geo_b = gromacs.editconf(
+    geo_b = gmx.editconf(
         workdir=hybrids_dir,
         geometry=hybrid_files.geometry_b,
         out_fname=f"{hybrid_files.geometry_b.stem}.gro",

@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 from simdel import _utils, chem, func
-from simdel._wrappers import gromacs
+from simdel._wrappers import gmx
 
 
 class PBCAlgorithm(enum.Enum):
@@ -104,7 +104,7 @@ def extract_cords(
 
 
 # TODO: refactor
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def split(  # noqa: PLR0913
     system: chem.System,
     trajectory: chem.Trajectory,
@@ -145,7 +145,7 @@ def split(  # noqa: PLR0913
         indexes=dict(index=~system.geometry_view.name.isna()),
     )
 
-    frames = gromacs.trjconv(
+    frames = gmx.trjconv(
         workdir=workdir,
         reference=system_dump.gro,
         trajectory=trajectory.file,
@@ -181,7 +181,7 @@ def split(  # noqa: PLR0913
 
 
 # TODO: refactor
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def extract_frame(  # noqa: PLR0913
     system: chem.System,
     trajectory: chem.Trajectory,
@@ -220,7 +220,7 @@ def extract_frame(  # noqa: PLR0913
         msg = "Time > trajectory length"
         raise ValueError(msg)
 
-    frames = gromacs.trjconv(
+    frames = gmx.trjconv(
         workdir=workdir,
         reference=system_dump.gro,
         trajectory=trajectory.file,
@@ -360,7 +360,7 @@ def fix(  # noqa: PLR0913
 
     mdp = temp_dir / "mdp.mdp"
     mdp.write_text("")
-    grompp_out = gromacs.grompp(
+    grompp_out = gmx.grompp(
         geometry=system_dump.gro,
         posres_geometry=system_dump.gro,
         top=system_dump.top,
@@ -369,7 +369,7 @@ def fix(  # noqa: PLR0913
         out_name="proxy",
     )
 
-    traj, *_ = gromacs.trjconv(
+    traj, *_ = gmx.trjconv(
         workdir=workdir,
         trajectory=trajectory.file,
         reference=grompp_out.tpr,
@@ -437,7 +437,7 @@ def fit(  # noqa: PLR0913
         index |= x
         groups.insert(1, "center")
 
-    traj, *_ = gromacs.trjconv(
+    traj, *_ = gmx.trjconv(
         workdir=workdir,
         trajectory=trajectory.file,
         reference=system_dump.gro,
@@ -503,7 +503,7 @@ def shift_on_vector(  # noqa: PLR0913
         index |= x
         groups = ["center"] + groups
 
-    traj, *_ = gromacs.trjconv(
+    traj, *_ = gmx.trjconv(
         workdir=workdir,
         trajectory=trajectory.file,
         reference=chemdump.gro,

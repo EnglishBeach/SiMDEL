@@ -10,10 +10,10 @@ from rdkit import Chem as rdChem
 
 from simdel import _utils
 from simdel._parsers import index_parser
-from simdel._wrappers import gromacs
+from simdel._wrappers import gmx
 
 
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def pdb2gro(pdb: Path, workdir: Path) -> Path:
     """Convert geometry .pdb to .gro file by gromacs editconf.
 
@@ -27,14 +27,14 @@ def pdb2gro(pdb: Path, workdir: Path) -> Path:
         _utils.backup(copied_pdb)
         shutil.copy(pdb, copied_pdb)
 
-    return gromacs.editconf(
+    return gmx.editconf(
         workdir=workdir,
         geometry=copied_pdb,
         out_fname=f"{pdb.stem}.gro",
     )
 
 
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def gro2pdb(gro: Path, workdir: Path) -> Path:
     """Convert geometry .gro to .pdb file by gromacs editconf.
 
@@ -48,7 +48,7 @@ def gro2pdb(gro: Path, workdir: Path) -> Path:
         _utils.backup(copied_gro)
         shutil.copy(gro, copied_gro)
 
-    return gromacs.editconf(
+    return gmx.editconf(
         geometry=copied_gro,
         out_fname=f"{gro.stem}.pdb",
         workdir=workdir,

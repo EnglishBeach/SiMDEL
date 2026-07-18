@@ -8,10 +8,10 @@ import numpy as np
 import pandas as pd
 
 from simdel import _utils, chem, func
-from simdel._wrappers import gromacs
+from simdel._wrappers import gmx
 
 
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def create_box(
     system: chem.System,
     workdir: Path,
@@ -30,7 +30,7 @@ def create_box(
     workdir.mkdir(parents=True, exist_ok=True)
     files = system.save(workdir)
 
-    box_gro = gromacs.editconf(
+    box_gro = gmx.editconf(
         workdir=workdir,
         geometry=files.gro,
         out_fname=f"{system.name}.gro",
@@ -171,7 +171,7 @@ def rescale_box(
     )
 
 
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def create_gromacs_indexes(system: chem.System, workdir: Path) -> dict[str, pd.Series[bool]]:
     """Create all selections by GROMACS.
 
@@ -183,7 +183,7 @@ def create_gromacs_indexes(system: chem.System, workdir: Path) -> dict[str, pd.S
     workdir.mkdir(parents=True, exist_ok=True)
     system_files = system.save(workdir)
 
-    index_file = gromacs.make_ndx(
+    index_file = gmx.make_ndx(
         geometry=system_files.gro,
         out_name="index",
         workdir=workdir,

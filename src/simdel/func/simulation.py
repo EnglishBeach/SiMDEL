@@ -11,12 +11,12 @@ from frozendict import frozendict
 import pandas as pd
 
 from simdel import _utils, chem, sim
-from simdel._wrappers import gromacs
+from simdel._wrappers import gmx
 
 
 # TODO: refactor parameters+plumed_parameters-> simulator
 # TODO: refactor n_mpi,n_omp,compress
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def simulate(  # noqa: PLR0913
     system: chem.System,
     parameters: sim.GromacsSimulator,
@@ -42,7 +42,7 @@ def simulate(  # noqa: PLR0913
     workdir.mkdir(parents=True, exist_ok=True)
 
     system_files = system.save(workdir)
-    preprocessed = gromacs.grompp(
+    preprocessed = gmx.grompp(
         workdir=workdir,
         geometry=system_files.gro,
         top=system_files.top,
@@ -53,7 +53,7 @@ def simulate(  # noqa: PLR0913
         maxwarn=5 if not _utils.STRICT else 0,
     )
 
-    run_files = gromacs.mdrun(
+    run_files = gmx.mdrun(
         workdir=workdir,
         tpr=preprocessed.tpr,
         plumed=plumed_parameters.save(workdir) if plumed_parameters else None,

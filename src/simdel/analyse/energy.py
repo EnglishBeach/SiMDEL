@@ -29,8 +29,7 @@ def analyze_dG(
     temperature: int = 298,
     samples: int = 100,
 ) -> AnalyzeResult:
-    """REQUIRE PMX!
-    Parse result calculate_BAR data.
+    """Parse result calculate_BAR data.
 
     :param workdir: Workdir path
     :param xvgs_a: List of .xvgs file paths of state A

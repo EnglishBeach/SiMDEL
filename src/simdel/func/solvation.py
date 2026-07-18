@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from simdel import _utils, chem, sim
-from simdel._wrappers import gromacs
+from simdel._wrappers import gmx
 
 from . import converters, geometry_transform, topology_transform
 
@@ -28,7 +28,7 @@ _PROXY_GEOM = """_PROXY
 """
 
 
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def solvate(
     system: chem.System,
     ff: chem.GromacsFF,
@@ -64,7 +64,7 @@ def solvate(
     )
     system_dump = mixed.save(workdir)
 
-    solvate_files = gromacs.solvate(
+    solvate_files = gmx.solvate(
         workdir=workdir,
         geometry=system_dump.gro,
         top=system_dump.top,
@@ -86,7 +86,7 @@ def solvate(
 
 
 # TODO: refactor
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def resolvate(
     system: chem.System,
     water_type: chem.WaterType,
@@ -137,7 +137,7 @@ def resolvate(
     )
 
 
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def add_ions(  # noqa: PLR0913
     system: chem.System,
     concentration: float,
@@ -181,7 +181,7 @@ def add_ions(  # noqa: PLR0913
     system_dump = system.save(workdir)
     mdp_file = parameters.save(workdir)
 
-    preprocessed = gromacs.grompp(
+    preprocessed = gmx.grompp(
         workdir=workdir,
         geometry=system_dump.gro,
         top=system_dump.top,
@@ -198,7 +198,7 @@ def add_ions(  # noqa: PLR0913
         index_file=sol_index,
         indexes=dict(SOL=system.geometry_view.molecule.map(lambda v: v in ["NA", "CL", "SOL"])),
     )
-    ionic_data = gromacs.genion(
+    ionic_data = gmx.genion(
         workdir=workdir,
         tpr=preprocessed.tpr,
         top=preprocessed.top,
@@ -238,7 +238,7 @@ def _gen_water_system(
     proxy_gro = workdir / f"{_PROXY_NAME}.gro"
     _utils.backup(proxy_gro)
     proxy_gro.write_text(_PROXY_GEOM)
-    parametrized_proxy = gromacs.pdb2gmx(
+    parametrized_proxy = gmx.pdb2gmx(
         workdir=workdir,
         ff_paths=ff_type.paths,
         geometry=proxy_gro,
@@ -252,7 +252,7 @@ def _gen_water_system(
     posres_water = "-DFLEXIBLE" if flexible_water else ""
     _utils.backup(mdp_proxy)
     mdp_proxy.write_text(f"define = {posres_water}")
-    preprocessed_proxy = gromacs.grompp(
+    preprocessed_proxy = gmx.grompp(
         workdir=workdir,
         geometry=parametrized_proxy.gro,
         top=parametrized_proxy.top,

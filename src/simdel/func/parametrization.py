@@ -5,13 +5,13 @@ import random
 import shutil
 
 from simdel import _log, _utils, chem
-from simdel._wrappers import gromacs, openff
+from simdel._wrappers import gmx, openff
 
 from . import geometry_transform, topology_transform
 
 
 # TODO: refactor
-@_utils.require(gromacs)
+@_utils.require(gmx)
 def parametrize_protein(  # noqa: PLR0913
     geometry: Path,
     ff: chem.GromacsFF,
@@ -36,7 +36,7 @@ def parametrize_protein(  # noqa: PLR0913
     geo = workdir / geometry.name
     shutil.copy(geometry, geo)
 
-    box_geo = gromacs.editconf(
+    box_geo = gmx.editconf(
         workdir=workdir,
         geometry=geo,
         out_fname=f"{name}_fixed{geometry.suffix}",
@@ -44,7 +44,7 @@ def parametrize_protein(  # noqa: PLR0913
         center=False,
     )
     water_index, _ = ff.get_water_info(water_type)
-    parametrized = gromacs.pdb2gmx(
+    parametrized = gmx.pdb2gmx(
         workdir=workdir,
         ff_paths=ff.paths,
         out_name=name,
@@ -58,7 +58,7 @@ def parametrize_protein(  # noqa: PLR0913
     mdp_proxy = workdir / "mdp.mdp"
     _utils.backup(mdp_proxy)
     mdp_proxy.write_text("define =")
-    preprocessed = gromacs.grompp(
+    preprocessed = gmx.grompp(
         workdir=workdir,
         geometry=parametrized.gro,
         top=parametrized.top,
