@@ -1,6 +1,10 @@
+[build-system]
+requires = ["uv_build<0.12"]
+build-backend = "uv_build"
+
 [project]
 name = "simdel"
-version = "0.0.0"
+version = "0.0.1"
 description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
 readme = "README.md"
@@ -11,12 +15,25 @@ dependencies = [
     "matplotlib",
     "mdtraj",
     "pandas",
-    # "plumed",
     "pydantic",
     "rdkit",
     "scipy",
     "pylazyimports",
 ]
+
+[project.optional-dependencies]
+plumed = ["plumed"]
+pmx = [
+    # "pmx"
+    # lomap2
+]
+gmx = [
+    # gmx-api
+]
+openff = [
+    # "openff"
+]
+# openmm = ['openmm']
 
 
 [tool.ruff]
@@ -170,3 +187,16 @@ pytest = ">=9.0.3"
 ruff = '>=0.15.16'
 pytest-xdist = "*"
 pytest-html = "*"
+
+[tool.poetry.group.plumed.dependencies]
+plumed = "*"
+
+[tool.poetry.group.pmx.dependencies]
+# pmx
+# lomap
+
+[tool.poetry.group.gmx.dependencies]
+# gmx
+
+[tool.poetry.group.openff.dependencies]
+# openff
