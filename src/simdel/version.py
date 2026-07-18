@@ -1,1 +1,1 @@
-VERSION = "0.3.29dev1"  # noqa: D100
+VERSION = "0.0.1"  # noqa: D100
