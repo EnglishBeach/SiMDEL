@@ -5,8 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from simdel import chem
-from simdel._misc import log
+from simdel import _log, chem
 
 # TODO: del _wrappers.gromacs
 
@@ -147,7 +146,7 @@ def set_constant_posres(
         l = len(overwrite_mask)
         max_len = 10
         msg = f"Older position restraints will be overwritten in: {indexes if l <= max_len else l}"
-        log.warning(msg)
+        _log.warning(msg)
 
     posres_df = posres.to_df()
     posres_df.loc[selection, cols] = (value, value, value)  # type: ignore

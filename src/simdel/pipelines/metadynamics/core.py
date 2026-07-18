@@ -16,8 +16,7 @@ import pandas as pd
 from pydantic import BaseModel
 from scipy import interpolate
 
-from simdel import analyse, chem, func, traj
-from simdel._misc import log, utils
+from simdel import _log, _utils, analyse, chem, func, traj
 from simdel.pipelines import selections
 
 from . import configs
@@ -29,7 +28,7 @@ class SiteResidue(BaseModel):
     residue_name: str
 
 
-class PipelineResult(utils.Table):
+class PipelineResult(_utils.Table):
     dG: pd.Series[float]
     dG_error: pd.Series[float]
 
@@ -97,7 +96,7 @@ def parametrize_protein(
 
     if compress:
         shutil.rmtree(temp_dir)
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
 
     protein.save(save_dir=workdir)
     return protein
@@ -145,7 +144,7 @@ def parametrize_ligand(
 
     if compress:
         shutil.rmtree(temp_dir)
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
     return system
 
 
@@ -180,7 +179,7 @@ def parametrize_extra(
 
     if compress:
         shutil.rmtree(temp_dir)
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
     return system
 
 
@@ -243,7 +242,7 @@ def create_box(  # noqa: PLR0913
         shutil.rmtree(temp_solvated)
         shutil.rmtree(temp_ionic)
         shutil.rmtree(temp_index)
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
     return indexed_box
 
 
@@ -355,7 +354,7 @@ def minimize(  # noqa: PLR0913
         shutil.rmtree(temp_nvt)
         shutil.rmtree(temp_npt)
         shutil.rmtree(temp_clear_posres)
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
     return minimized_system
 
 
@@ -408,7 +407,7 @@ def npt(  # noqa: PLR0913
             energy.edr.unlink()
         (workdir / f"{system.name}.top").unlink()
         (workdir / f"{system.name}.ndx").unlink()
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
 
     if not trajectory:
         msg = "No trajectory after npt"
@@ -439,7 +438,7 @@ def split_trajectory(  # noqa: PLR0913
         compress=compress,
     )
     if compress:
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
 
     return [system.rename(f"frame_{i}") for i, system in enumerate(systems)]
 
@@ -562,7 +561,7 @@ def metadynamics(  # noqa: PLR0913
                     energy.edr.unlink()
                 (workdir / f"{system.name}.top").unlink()
                 (workdir / f"{system.name}.ndx").unlink()
-                utils.clear_backups(workdir)
+                _utils.clear_backups(workdir)
 
             return MetadynamicsOut(
                 cv=plumed_data["colvar"],
@@ -572,7 +571,7 @@ def metadynamics(  # noqa: PLR0913
         except Exception:  # noqa: PERF203
             time_.sleep(1)
     msg = "All trials are failed"
-    log.warning(msg)
+    _log.warning(msg)
     return None
 
 
@@ -749,7 +748,7 @@ def _get_reference_file(
     atoms = list(v2.apply(_get_pdb_atoms, axis=1))
     end = [i for i in text[-3:] if "ATOM" not in i]
 
-    utils.backup(file=pdb)
+    _utils.backup(file=pdb)
     pdb.write_text("\n".join([*head, *atoms, *end]))
     return pdb
 

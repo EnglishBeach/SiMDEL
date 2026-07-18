@@ -5,14 +5,14 @@ import json
 from pathlib import Path
 import shutil
 
-from simdel import chem
-from simdel._misc import context, utils
+# import lomap
+from simdel import _utils, chem
 from simdel._wrappers import gromacs, pmx
 
 from . import converters
 
 
-@context.require_pmx
+@_utils.require(pmx)
 def create_hybrids(
     workdir: Path,
     system_a: chem.System,
@@ -99,7 +99,7 @@ def create_hybrids(
     return hybridA, hybridB
 
 
-@context.require_mamba
+# @_utils.require(lomap)
 def gen_alchemy_graph(workdir: Path, sdf_list: list[Path]) -> list[tuple[Path, Path]]:
     """REQUIRE MAMBA DEPENDENCIES!
     Generate pair transformations graph, uses LOMAP when n ligands >=6.
@@ -108,8 +108,6 @@ def gen_alchemy_graph(workdir: Path, sdf_list: list[Path]) -> list[tuple[Path, P
     :param sdf_list: List of .sdf files (1 .sdf per molecule)
     :return: List of pairs (.sdf 1, .sdf 2)
     """
-    import lomap  # type: ignore # noqa: PLC0415
-
     min_pairs_n_lomap_use = 6
 
     workdir.mkdir(parents=True, exist_ok=True)
@@ -121,15 +119,7 @@ def gen_alchemy_graph(workdir: Path, sdf_list: list[Path]) -> list[tuple[Path, P
         shutil.copy(src=sdf, dst=workdir / f"{sdf.name}")
         sdf_map[sdf.stem] = sdf
 
-    mol_db = lomap.DBMolecules(directory=workdir.as_posix(), radial=True)
-    mol_db.build_matrices()
-    nx_graph = mol_db.build_graph()
-    pairs = []
-    for s, e in nx_graph.edges:  # type: ignore
-        sdf_a = Path(mol_db.dic_mapping[s]).stem
-        sdf_b = Path(mol_db.dic_mapping[e]).stem
-
-        pairs.append((sdf_map[sdf_a], sdf_map[sdf_b]))
+    pairs = pmx.generate_graph(workdir, sdf_map)
     (workdir / "pairs.json").write_text(json.dumps(pairs))
     return pairs
 
@@ -153,11 +143,11 @@ def _split_system_dump(
     s_files = system.save(workdir)
 
     ff = workdir / f"{top.name}.ff.itp"
-    utils.backup(ff)
+    _utils.backup(ff)
     ff.write_text("\n".join(system.forcefield.dump()))
 
     itp = workdir / f"{top.name}.itp"
-    utils.backup(itp)
+    _utils.backup(itp)
     itp.write_text("\n".join(top.dump()))
     pdb = converters.gro2pdb(gro=s_files.gro, workdir=workdir)
     return (top_old.name, ff, itp, pdb)

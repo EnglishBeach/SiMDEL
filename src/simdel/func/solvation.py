@@ -2,8 +2,7 @@
 
 from pathlib import Path
 
-from simdel import chem, sim
-from simdel._misc import context, utils
+from simdel import _utils, chem, sim
 from simdel._wrappers import gromacs
 
 from . import converters, geometry_transform, topology_transform
@@ -29,6 +28,7 @@ _PROXY_GEOM = """_PROXY
 """
 
 
+@_utils.require(gromacs)
 def solvate(
     system: chem.System,
     ff: chem.GromacsFF,
@@ -86,6 +86,7 @@ def solvate(
 
 
 # TODO: refactor
+@_utils.require(gromacs)
 def resolvate(
     system: chem.System,
     water_type: chem.WaterType,
@@ -136,6 +137,7 @@ def resolvate(
     )
 
 
+@_utils.require(gromacs)
 def add_ions(  # noqa: PLR0913
     system: chem.System,
     concentration: float,
@@ -187,11 +189,11 @@ def add_ions(  # noqa: PLR0913
         posres_geometry=system_dump.gro,
         out_name="ionic",
         merge=True,
-        maxwarn=5 if not context.STRICT else 0,
+        maxwarn=5 if not _utils.STRICT else 0,
     )
 
     sol_index = workdir / "sol.ndx"
-    utils.backup(sol_index)
+    _utils.backup(sol_index)
     converters.dump_index(
         index_file=sol_index,
         indexes=dict(SOL=system.geometry_view.molecule.map(lambda v: v in ["NA", "CL", "SOL"])),
@@ -234,7 +236,7 @@ def _gen_water_system(
     :return: System with water and ion topologies
     """
     proxy_gro = workdir / f"{_PROXY_NAME}.gro"
-    utils.backup(proxy_gro)
+    _utils.backup(proxy_gro)
     proxy_gro.write_text(_PROXY_GEOM)
     parametrized_proxy = gromacs.pdb2gmx(
         workdir=workdir,
@@ -248,7 +250,7 @@ def _gen_water_system(
     )
     mdp_proxy = workdir / "mdp.mdp"
     posres_water = "-DFLEXIBLE" if flexible_water else ""
-    utils.backup(mdp_proxy)
+    _utils.backup(mdp_proxy)
     mdp_proxy.write_text(f"define = {posres_water}")
     preprocessed_proxy = gromacs.grompp(
         workdir=workdir,
@@ -258,7 +260,7 @@ def _gen_water_system(
         mdp=mdp_proxy,
         out_name=_PROXY_NAME,
         merge=True,
-        maxwarn=5 if not context.STRICT else 0,
+        maxwarn=5 if not _utils.STRICT else 0,
     )
     preprocessed_proxy.tpr.unlink()
     s = (

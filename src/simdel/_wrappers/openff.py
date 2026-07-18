@@ -4,11 +4,15 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import numpy as np
+from openff import interchange, units
+from openff.toolkit import topology
+from openff.toolkit.typing.engines import smirnoff
+from openff.toolkit.utils import exceptions
 
-from simdel._misc import context, log, utils
+from simdel import _log, _utils
 
 
-class ParametrizeOut(utils.PathContainer):
+class ParametrizeOut(_utils.PathContainer):
     """Openff parametrize output file paths container."""
 
     gro: Path
@@ -18,7 +22,6 @@ class ParametrizeOut(utils.PathContainer):
     """Topology .top path"""
 
 
-@context.require_mamba
 def parametrize(
     workdir: Path,
     sdf: Path,
@@ -37,14 +40,10 @@ def parametrize(
     instead of `am1bcc` (slow variant), defaults to False
     :return: Path container
     """
-    from openff import interchange, units  # type: ignore # noqa: PLC0415
-    from openff.toolkit import topology  # type: ignore # noqa: PLC0415
-    from openff.toolkit.typing.engines import smirnoff  # type: ignore # noqa: PLC0415
-
     top = workdir / f"{out_name}.top"
     gro = workdir / f"{out_name}.gro"
 
-    with log.context(msg=f"openff parametrize {sdf.name}", level=log.Level.DEBUG):
+    with _log.context(msg=f"openff parametrize {sdf.name}", level=_log.Level.DEBUG):
         molecule = topology.Molecule.from_file(sdf.as_posix())
         if isinstance(molecule, list):
             msg = f"Several molecules in file: {sdf}"
@@ -79,10 +78,6 @@ def _fallback_am1bcc(molecule) -> None:  # noqa: ANN001
 
     :param molecule: Molecule to charge
     """
-    from openff import units  # type: ignore # noqa: PLC0415
-    from openff.toolkit import topology  # type: ignore   # noqa: F401, PLC0415
-    from openff.toolkit.utils import exceptions  # type: ignore # noqa: PLC0415
-
     with TemporaryDirectory() as tmpdir:
         net_charge = molecule.total_charge.m_as(units.unit.elementary_charge)
 
@@ -102,7 +97,7 @@ def _fallback_am1bcc(molecule) -> None:  # noqa: ANN001
             "-c bcc",
             f"-nc {net_charge}",
         ]
-        utils.run(
+        _utils.run(
             command=command,
             title=f"antechamber convert {molecule.pdb}",
             workdir=Path(tmpdir),
@@ -120,7 +115,7 @@ def _fallback_am1bcc(molecule) -> None:  # noqa: ANN001
             f"-cf {charges_fname}",
             "-pf yes",
         ]
-        utils.run(
+        _utils.run(
             command=command,
             title=f"antechamber set charges {molecule.pdb}",
             workdir=Path(tmpdir),

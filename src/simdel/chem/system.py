@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from pydantic import BaseModel
 
-from simdel._misc import log, utils
+from simdel import _log, _utils
 from simdel._parsers import gro_parser, index_parser, top_parser
 
 from . import (
@@ -329,7 +329,7 @@ class System(BaseModel, frozen=True, arbitrary_types_allowed=True):
                 tops = list(top_map.values())
                 old_name = tops[tops.index(top)].name
                 msg = f"Same topologies have different names: {old_name} - {top_name}"
-                log.warning(msg)
+                _log.warning(msg)
             elif (top_name in top_map) and (top != top_map[top_name]):
                 msg = f"Different topologies have same name: {top_name}"
                 raise ValueError(msg)
@@ -491,7 +491,7 @@ class System(BaseModel, frozen=True, arbitrary_types_allowed=True):
             residues=residues,
             sequences=sequences,
         )
-        utils.backup(gro_file)
+        _utils.backup(gro_file)
         gro_file.write_text("\n".join(gro_data))
         return gro_file
 
@@ -528,7 +528,7 @@ class System(BaseModel, frozen=True, arbitrary_types_allowed=True):
         ).dump()
 
         top_file = save_dir / f"{self.name}.top"
-        utils.backup(top_file)
+        _utils.backup(top_file)
         top_file.write_text("\n".join([*ff_dump, *mol_dumps, *system_dump]))
         return top_file
 
@@ -543,6 +543,6 @@ class System(BaseModel, frozen=True, arbitrary_types_allowed=True):
         lines = []
         for name, selection in self.index.items():
             lines.extend(index_parser.dump_index(name=name, mask=selection))
-        utils.backup(index_file)
+        _utils.backup(index_file)
         index_file.write_text("\n".join(lines))
         return index_file

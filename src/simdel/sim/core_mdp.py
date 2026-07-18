@@ -8,7 +8,7 @@ import typing
 from pydantic import BaseModel
 from pydantic.functional_validators import BeforeValidator as _Validator
 
-from simdel._misc import utils
+from simdel import _utils
 
 # Field types
 _custom_bool = enum.Flag
@@ -80,7 +80,7 @@ class BaseMDP(BaseModel):
         :return: Dump .mdp file
         """
         config_file = save_dir / f"{self.name}.mdp"
-        utils.backup(config_file)
+        _utils.backup(config_file)
         config_file.write_text(self.dump())
         return config_file
 

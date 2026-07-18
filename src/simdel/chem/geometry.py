@@ -10,7 +10,7 @@ import pandas as pd
 import pydantic
 from pydantic import BaseModel
 
-from simdel._misc import utils
+from simdel import _utils
 from simdel._parsers import gro_parser
 
 _bool = np.vectorize(bool)
@@ -364,7 +364,7 @@ class BoxType(enum.Enum):
     """Octahedron box."""
 
 
-class Coordinates(utils.Table):
+class Coordinates(_utils.Table):
     """Atom coordinates data table variant for geometry."""
 
     molecule_id: pd.Series[int]

@@ -10,7 +10,8 @@ import numpy as np
 import pandas as pd
 import pydantic
 
-from simdel._misc import context
+from simdel import _utils
+from simdel._wrappers import plumed
 
 R: float = 8.314
 """Ideal Gas Constant, in `J/(mol K)`."""
@@ -37,7 +38,7 @@ class CVData(pydantic.BaseModel):
         return (self.max - self.min) / self.nbins
 
 
-@context.require_plumed
+@_utils.require(plumed)
 class FES(pydantic.BaseModel, arbitrary_types_allowed=True):
     """Free energy space in time."""
 
@@ -58,9 +59,7 @@ class FES(pydantic.BaseModel, arbitrary_types_allowed=True):
         :param time: Time. In `ns`
         :return FES: Free energy surface object
         """
-        import plumed
-
-        df = plumed.read_as_pandas(fes.as_posix()).rename(columns={"file.free": "free"})
+        df = plumed.read_fes(fes)
         cv_data_ = collections.defaultdict(dict)
 
         for var, value_, _ in df.plumed_constants:
@@ -75,7 +74,7 @@ class FES(pydantic.BaseModel, arbitrary_types_allowed=True):
         )
 
 
-@context.require_plumed
+@_utils.require(plumed)
 def integrate_hills(
     hills: Path,
     T: float,
@@ -93,13 +92,11 @@ def integrate_hills(
     :param workdir: Workdir path
     :return: Hill integrals DataFrame without plumed metadata
     """
-    from simdel._wrappers import plumed as md_plumed
-
     workdir.mkdir(parents=True, exist_ok=True)
     prefix = "fes"
 
     hills_file = Path(shutil.copy(src=hills, dst=workdir / hills.name))
-    integrals = md_plumed.plumed_sum_hills(
+    integrals = plumed.plumed_sum_hills(
         workdir=workdir,
         hills=hills_file,
         kt=T * R / 1000,

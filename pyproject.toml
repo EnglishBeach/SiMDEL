@@ -15,10 +15,10 @@ dependencies = [
     "pydantic",
     "rdkit",
     "scipy",
+    "pylazyimports",
 ]
 
 
-# LINT
 [tool.ruff]
 target-version = "py310"
 line-length = 100
@@ -124,24 +124,22 @@ suppress-none-returning = true
 mypy-init-return = true
 allow-star-arg-any = true
 ignore-fully-untyped = true
+[tool.ruff.lint.isort]
+known-first-party = ["simdel"]
+combine-as-imports = true
+force-sort-within-sections = true
 
-[tool.pyright]
-include = ["src"]
-exclude = ["*/__init__.py", "**/__pycache__", "**/node_modules", ".*", ".venv"]
-typeCheckingMode = "standard"
-
-
-# FORMAT
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
 skip-magic-trailing-comma = false
 
-[tool.ruff.lint.isort]
-known-first-party = ["simdel"]
-combine-as-imports = true
-force-sort-within-sections = true
+[tool.pyright]
+include = ["src"]
+exclude = ["*/__init__.py", "**/__pycache__", "**/node_modules", ".*", ".venv"]
+typeCheckingMode = "standard"
+
 
 [tool.poetry]
 name = "simdel"
@@ -164,6 +162,7 @@ rdkit = ">=2024.3.1"
 scipy = ">=1.15.3"
 parmed = ">=4.3.0"
 pygraphviz = ">=1.14"
+pylazyimports = '*'
 
 
 [tool.poetry.group.dev.dependencies]

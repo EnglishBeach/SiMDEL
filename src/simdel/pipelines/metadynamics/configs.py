@@ -7,8 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from simdel import chem, sim
-from simdel._misc import utils
+from simdel import _utils, chem, sim
 from simdel.pipelines import selections
 
 
@@ -197,5 +196,5 @@ PRINT STRIDE={stride} ARG=* FILE=colvar.dat"""
     )
 
 
-def _make_str(masked: utils.Table):
+def _make_str(masked: _utils.Table):
     return ",".join(str(i) for i in masked.index + 1)

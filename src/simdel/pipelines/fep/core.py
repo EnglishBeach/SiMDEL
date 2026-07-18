@@ -10,8 +10,7 @@ import shutil
 import pandas as pd
 from pydantic import BaseModel
 
-from simdel import analyse, chem, func, traj
-from simdel._misc import utils
+from simdel import _utils, analyse, chem, func, traj
 from simdel.chem import DefaultFF, DefaultIon
 
 from . import configs
@@ -26,7 +25,7 @@ class StateName:
     cb = "complex_B"
 
 
-class PipelineResult(utils.Table):
+class PipelineResult(_utils.Table):
     ligand_a: str
     """Ligand A name"""
 
@@ -111,7 +110,7 @@ def parametrize_extra(
 
     if compress:
         shutil.rmtree(temp_dir)
-        utils.clear_backups(workdir)
+        _utils.clear_backups(workdir)
     return system
 
 

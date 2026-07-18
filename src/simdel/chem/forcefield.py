@@ -5,11 +5,11 @@ from __future__ import annotations
 import pandas as pd
 import pydantic
 
-from simdel._misc import log, utils
+from simdel import _log, _utils
 from simdel._parsers import top_parser
 
 
-class Defaults(utils.Table):
+class Defaults(_utils.Table):
     """Non-bonded interactions parameters.
 
     See GROMACS documentation:
@@ -34,7 +34,7 @@ class Defaults(utils.Table):
     """Scaling factor for the Coulomb interaction, is always used."""
 
 
-class Atomtypes(utils.Table):
+class Atomtypes(_utils.Table):
     """Atom types, specifying default `atoms` parameters: bonded and non-bonded.
     The Lennard-Jones potential V = (sigma/r^6)-(epsilon/r^12),
     meaning sigma and epsilon in it depends on `Defaults.combination_rule`.
@@ -69,7 +69,7 @@ class Atomtypes(utils.Table):
     """Parameters list."""
 
 
-class BondTypes(utils.Table):
+class BondTypes(_utils.Table):
     """Bond types, specifying default `bonds` parameters in topologies.
 
     See GROMACS documentation:
@@ -89,7 +89,7 @@ class BondTypes(utils.Table):
     """Parameters list."""
 
 
-class PairTypes(utils.Table):
+class PairTypes(_utils.Table):
     """Non-bonded atom interactions types for concrete atoms types,
     specifying default `pairs` in topologies.
 
@@ -111,7 +111,7 @@ class PairTypes(utils.Table):
 
 
 # TODO: restraints!=Constraint
-class ConstraintTypes(utils.Table):
+class ConstraintTypes(_utils.Table):
     """Constraint types, specifying default `constraints` in topologies.
 
     See GROMACS documentation:
@@ -131,7 +131,7 @@ class ConstraintTypes(utils.Table):
     """Constraint force constant."""
 
 
-class AngleTypes(utils.Table):
+class AngleTypes(_utils.Table):
     """Angles types, specifying default `angles` parameters in topologies.
     Meaning theta, cth depends on function type.
 
@@ -155,7 +155,7 @@ class AngleTypes(utils.Table):
     """Parameters list."""
 
 
-class DihedralTypes(utils.Table):
+class DihedralTypes(_utils.Table):
     """Dihedral types, meaning cX depend on function type,
     specifying default `dihedrals` angle parameters in topologies.
 
@@ -182,7 +182,7 @@ class DihedralTypes(utils.Table):
     """Parameters list."""
 
 
-class ImplicitGenbornParams(utils.Table):
+class ImplicitGenbornParams(_utils.Table):
     """Implicit solvation parameters."""
 
     i: pd.Series[str]
@@ -192,7 +192,7 @@ class ImplicitGenbornParams(utils.Table):
     """Parameters list."""
 
 
-class NonbondParams(utils.Table):
+class NonbondParams(_utils.Table):
     """Non-bonded atom interactions types for all atom types,
     specifying default `nonbond_params` parameters.
 
@@ -213,7 +213,7 @@ class NonbondParams(utils.Table):
     """Parameters list."""
 
 
-class Cmaptypes(utils.Table):
+class Cmaptypes(_utils.Table):
     """C-map types for charm ff, specifying default `cmaptypes` parameters.
 
     See GROMACS documentation:
@@ -294,7 +294,7 @@ class Forcefield(pydantic.BaseModel, frozen=True, arbitrary_types_allowed=True):
                 f"Self :{list(self.defaults[0])}\n"
                 f"Other:{list(ff.defaults[0])}"
             )
-            log.warning(msg)
+            _log.warning(msg)
 
         new_data = {
             key: table.__class__(
@@ -330,7 +330,7 @@ class Forcefield(pydantic.BaseModel, frozen=True, arbitrary_types_allowed=True):
         new_atomtypes = self.atomtypes[self.atomtypes.type.map(lambda x: x not in atom_types)]
 
         def f(x):  # type: ignore
-            x: utils.Table
+            x: _utils.Table
             mask = x.to_df().map(lambda x: x not in atom_types)
             return x[mask.all(axis=1)]
 

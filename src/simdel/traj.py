@@ -9,7 +9,7 @@ import shutil
 import numpy as np
 import pandas as pd
 
-from simdel import chem, func
+from simdel import _utils, chem, func
 from simdel._wrappers import gromacs
 
 
@@ -104,6 +104,7 @@ def extract_cords(
 
 
 # TODO: refactor
+@_utils.require(gromacs)
 def split(  # noqa: PLR0913
     system: chem.System,
     trajectory: chem.Trajectory,
@@ -180,6 +181,7 @@ def split(  # noqa: PLR0913
 
 
 # TODO: refactor
+@_utils.require(gromacs)
 def extract_frame(  # noqa: PLR0913
     system: chem.System,
     trajectory: chem.Trajectory,

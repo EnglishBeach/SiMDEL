@@ -33,7 +33,7 @@ from pydantic import BaseModel
 import pythonjsonlogger.jsonlogger as json_log
 
 import simdel
-from simdel._misc import log, utils
+from simdel import _log, _utils
 
 from . import pools
 
@@ -75,7 +75,7 @@ class Pipeline(BaseModel, arbitrary_types_allowed=True, extra="allow"):
         """Pipeline label."""
         return str(self.__class__)
 
-    def pipeline_run(self) -> utils.Table:
+    def pipeline_run(self) -> _utils.Table:
         """General run function."""
         ...
 
@@ -91,8 +91,8 @@ class Pipeline(BaseModel, arbitrary_types_allowed=True, extra="allow"):
         """
         # TODO: can combine?
         try:
-            with log.context(f"Replica {replica.label}", level=log.Level.INFO):  # noqa: SIM117
-                with log.log_stream_context(str(replica.id)):
+            with _log.context(f"Replica {replica.label}", level=_log.Level.INFO):  # noqa: SIM117
+                with _log.log_stream_context(str(replica.id)):
                     result = replica.run(replica_input)
 
         except Exception:
@@ -105,7 +105,7 @@ class Pipeline(BaseModel, arbitrary_types_allowed=True, extra="allow"):
             _progress_log(results_list=self.progress_list, n_replicas=n_replicas)
             return result
 
-    def run(self) -> utils.Table:
+    def run(self) -> _utils.Table:
         """Run pipeline on local host.
 
         :return: Pipeline result table
@@ -113,7 +113,7 @@ class Pipeline(BaseModel, arbitrary_types_allowed=True, extra="allow"):
         self.workdir = self.workdir.resolve()
         if self.workdir.exists():
             msg = f"Pipeline folder is exists: {self.workdir}"
-            log.warning(msg)
+            _log.warning(msg)
         self.workdir.mkdir(parents=True, exist_ok=True)
 
         _log_methods(self)
@@ -184,7 +184,7 @@ class Replica(BaseModel, arbitrary_types_allowed=True, extra="allow"):
         self.workdir = self.workdir.resolve()
         if self.workdir.exists():
             msg = f"Replica folder is exists: {self.workdir}"
-            log.warning(msg)
+            _log.warning(msg)
         self.workdir.mkdir(parents=True, exist_ok=True)
 
         handle_log_file(self.workdir)
@@ -197,11 +197,11 @@ def suppress_warnings():
     """Suppress all warnings in stdout."""
     logging.captureWarnings(capture=True)
     warnings_logger = logging.getLogger("py.warnings")
-    warnings_logger.setLevel(log.Level.WARNING.value)
+    warnings_logger.setLevel(_log.Level.WARNING.value)
     warnings.filterwarnings("ignore", category=UserWarning, module=".*site-packages.*")
 
 
-def handle_stdout_log(level: log.Level = log.Level.INFO):
+def handle_stdout_log(level: _log.Level = _log.Level.INFO):
     """Handle all log messages >= Info to stdout at remote container.
 
     :param level: Logging level
@@ -211,8 +211,8 @@ def handle_stdout_log(level: log.Level = log.Level.INFO):
         handler = logging.StreamHandler()
         handler.setLevel(level.value)
         handler.setFormatter(_FORMATTER)
-        handler.addFilter(log.LogStreamFilter(default_stream=True))
-        log.logger.addHandler(handler)
+        handler.addFilter(_log.LogStreamFilter(default_stream=True))
+        _log.logger.addHandler(handler)
         _STDOUT_HANDLED = True
 
 
@@ -223,10 +223,10 @@ def handle_log_file(folder: Path, name: str = "log"):
     :param name: Log file, defaults to "log"
     """
     handler = logging.FileHandler(filename=folder / f"{name}.log")
-    handler.setLevel(log.Level.DEBUG.value)
+    handler.setLevel(_log.Level.DEBUG.value)
     handler.setFormatter(_FORMATTER)
-    handler.addFilter(log.LogStreamFilter(default_stream=False))
-    log.logger.addHandler(handler)
+    handler.addFilter(_log.LogStreamFilter(default_stream=False))
+    _log.logger.addHandler(handler)
 
 
 def handle_log_json(folder: Path):
@@ -235,7 +235,7 @@ def handle_log_json(folder: Path):
     :param folder: Save dir path
     """
     handler = logging.FileHandler(filename=folder / "log.json")
-    handler.setLevel(log.Level.DEBUG.value)
+    handler.setLevel(_log.Level.DEBUG.value)
     handler.setFormatter(_JSON_FORMATTER)
     logging.getLogger().addHandler(handler)
 
@@ -258,7 +258,7 @@ def _log_methods(self: BaseModel):
             or isinstance(field, property)
         ):
             continue
-        logged = log.context(i.replace("_", " ").upper(), level=log.Level.INFO)(field)
+        logged = _log.context(i.replace("_", " ").upper(), level=_log.Level.INFO)(field)
         setattr(self, i, logged)
 
 
@@ -270,4 +270,4 @@ def _progress_log(results_list: dict[int, int], n_replicas: int):
     """
     ok = sum(i for i in results_list.values() if i > 0)
     nok = -sum(i for i in results_list.values() if i < 0)
-    log.info(f"Progress: {ok + nok:>3d}/{n_replicas} fails:{nok:>3d}")
+    _log.info(f"Progress: {ok + nok:>3d}/{n_replicas} fails:{nok:>3d}")

@@ -8,11 +8,12 @@ import shutil
 import pandas as pd
 from rdkit import Chem as rdChem
 
-from simdel._misc import utils
+from simdel import _utils
 from simdel._parsers import index_parser
 from simdel._wrappers import gromacs
 
 
+@_utils.require(gromacs)
 def pdb2gro(pdb: Path, workdir: Path) -> Path:
     """Convert geometry .pdb to .gro file by gromacs editconf.
 
@@ -23,7 +24,7 @@ def pdb2gro(pdb: Path, workdir: Path) -> Path:
     workdir.mkdir(parents=True, exist_ok=True)
     copied_pdb = workdir / pdb.name
     if copied_pdb != pdb:
-        utils.backup(copied_pdb)
+        _utils.backup(copied_pdb)
         shutil.copy(pdb, copied_pdb)
 
     return gromacs.editconf(
@@ -33,6 +34,7 @@ def pdb2gro(pdb: Path, workdir: Path) -> Path:
     )
 
 
+@_utils.require(gromacs)
 def gro2pdb(gro: Path, workdir: Path) -> Path:
     """Convert geometry .gro to .pdb file by gromacs editconf.
 
@@ -43,7 +45,7 @@ def gro2pdb(gro: Path, workdir: Path) -> Path:
     workdir.mkdir(parents=True, exist_ok=True)
     copied_gro = workdir / gro.name
     if copied_gro != gro:
-        utils.backup(copied_gro)
+        _utils.backup(copied_gro)
         shutil.copy(gro, copied_gro)
 
     return gromacs.editconf(
@@ -91,7 +93,7 @@ def dump_index(index_file: Path, indexes: dict[str, pd.Series[bool]]) -> Path:
     lines = []
     for name, selection in indexes.items():
         lines.extend(index_parser.dump_index(name=name, mask=selection))
-    utils.backup(index_file)
+    _utils.backup(index_file)
     index_file.write_text("\n".join(lines))
     return index_file
 

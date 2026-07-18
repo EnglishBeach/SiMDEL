@@ -5,13 +5,13 @@ from __future__ import annotations
 import pandas as pd
 from pydantic import BaseModel
 
-from simdel._misc import log, utils
+from simdel import _log, _utils
 from simdel._parsers import top_parser
 
 from . import views
 
 
-class Atoms(utils.Table):
+class Atoms(_utils.Table):
     """Atom parameters,
     if any parameter not set, value will be set from forcefield atom types.
     """
@@ -53,7 +53,7 @@ class Atoms(utils.Table):
     """Optional atom charge [electron]."""
 
 
-class Bonds(utils.Table):
+class Bonds(_utils.Table):
     """Bond parameters,
     if any parameter not set, value will be set from forcefield bond types.
     """
@@ -71,7 +71,7 @@ class Bonds(utils.Table):
     """Parameters list."""
 
 
-class Pairs(utils.Table):
+class Pairs(_utils.Table):
     """Non-bonded atom interactions for concrete atoms,
     if any parameter not set, value will be set from forcefield pairs types.
     """
@@ -89,7 +89,7 @@ class Pairs(utils.Table):
     """Parameters list."""
 
 
-class Constraints(utils.Table):
+class Constraints(_utils.Table):
     """Fixed distances between atoms, meaning cX depend on function type,
     if any parameter not set, value will be set from forcefield dihedrals types.
     """
@@ -107,7 +107,7 @@ class Constraints(utils.Table):
     """Distance [nm]."""
 
 
-class Angles(utils.Table):
+class Angles(_utils.Table):
     """Angles parameters table,
     if any parameter not set, value will be set from forcefield angle types.
     """
@@ -128,7 +128,7 @@ class Angles(utils.Table):
     """Parameters list."""
 
 
-class Dihedrals(utils.Table):
+class Dihedrals(_utils.Table):
     """Dihedral parameters, meaning cX depend on function type,
     if any parameter not set, value will be set from forcefield dihedrals types.
     """
@@ -152,7 +152,7 @@ class Dihedrals(utils.Table):
     """Parameters list."""
 
 
-class Exclusions(utils.Table):
+class Exclusions(_utils.Table):
     """Excluded atoms in non-bonded interactions parameters,
     1 or more atoms in interaction.
     """
@@ -161,7 +161,7 @@ class Exclusions(utils.Table):
     """Atom indices."""
 
 
-class Settles(utils.Table):
+class Settles(_utils.Table):
     """Atom distances in rigid water for SETTLE constraint algorithm."""
 
     OW: pd.Series[int]
@@ -174,7 +174,7 @@ class Settles(utils.Table):
     """Parameters list."""
 
 
-class VirtualSites1(utils.Table):
+class VirtualSites1(_utils.Table):
     """1-body virtual site parameters."""
 
     ai: pd.Series[int]
@@ -187,7 +187,7 @@ class VirtualSites1(utils.Table):
     """Function type."""
 
 
-class VirtualSites2(utils.Table):
+class VirtualSites2(_utils.Table):
     """2-body virtual site parameters."""
 
     ai: pd.Series[int]
@@ -206,7 +206,7 @@ class VirtualSites2(utils.Table):
     """Parameters list."""
 
 
-class VirtualSites3(utils.Table):
+class VirtualSites3(_utils.Table):
     """3-body virtual site parameters."""
 
     ai: pd.Series[int]
@@ -228,7 +228,7 @@ class VirtualSites3(utils.Table):
     """Parameters list."""
 
 
-class VirtualSites4(utils.Table):
+class VirtualSites4(_utils.Table):
     """4-body virtual site parameters."""
 
     ai: pd.Series[int]
@@ -253,7 +253,7 @@ class VirtualSites4(utils.Table):
     """Parameters list."""
 
 
-class VirtualSitesN(utils.Table):
+class VirtualSitesN(_utils.Table):
     """n-body virtual site parameters."""
 
     ai: pd.Series[int]
@@ -266,7 +266,7 @@ class VirtualSitesN(utils.Table):
     """Parameters list."""
 
 
-class PositionRestraints(utils.Table):
+class PositionRestraints(_utils.Table):
     """Position restraints parameters."""
 
     ai: pd.Series[int]
@@ -279,7 +279,7 @@ class PositionRestraints(utils.Table):
     """Parameters list."""
 
 
-class DistanceRestraints(utils.Table):
+class DistanceRestraints(_utils.Table):
     """Distance restraints parameters."""
 
     ai: pd.Series[int]
@@ -299,7 +299,7 @@ class DistanceRestraints(utils.Table):
     """Parameters list."""
 
 
-class DihedralRestraints(utils.Table):
+class DihedralRestraints(_utils.Table):
     """Dihedral restraints parameters."""
 
     ai: pd.Series[int]
@@ -322,7 +322,7 @@ class DihedralRestraints(utils.Table):
 
 
 # TODO: exp,label desc
-class OrientationRestraints(utils.Table):
+class OrientationRestraints(_utils.Table):
     """Orientation restraints parameters."""
 
     ai: pd.Series[int]
@@ -344,7 +344,7 @@ class OrientationRestraints(utils.Table):
 
 
 # TODO: n desc
-class AngleRestraints(utils.Table):
+class AngleRestraints(_utils.Table):
     """Angle restraints parameters."""
 
     ai: pd.Series[int]
@@ -372,7 +372,7 @@ class AngleRestraints(utils.Table):
 
 
 # TODO: n desc
-class AngleRestraintsZ(utils.Table):
+class AngleRestraintsZ(_utils.Table):
     """Angle in z axis restraints parameters."""
 
     ai: pd.Series[int]
@@ -504,7 +504,7 @@ class Topology(BaseModel, frozen=True, arbitrary_types_allowed=True):
 
         if len(top.atoms.ai) != len(range(1, len(top.atoms.ai) + 1)):
             msg = "Atom index is not continuous"
-            log.warning(msg)
+            _log.warning(msg)
 
         return Topology(
             name=top.moleculetype.name[0],
@@ -566,7 +566,7 @@ class Topology(BaseModel, frozen=True, arbitrary_types_allowed=True):
         """
         return self.model_copy(update=dict(name=name))
 
-    def set_restraints(self, restraints_type: str, restraints_data: utils.Table) -> Topology:
+    def set_restraints(self, restraints_type: str, restraints_data: _utils.Table) -> Topology:
         """Set restraints, overwrite older restraints with same type.
 
         :param restraints_type: Restraints type (Restraints class name)

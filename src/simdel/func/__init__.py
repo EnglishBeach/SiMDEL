@@ -1,6 +1,10 @@
 """System assembly and manipulation functions."""
 
-from .alchemy import create_hybrids, gen_alchemy_graph
+import lazyimports
+
+with lazyimports.lazy_imports("lomap"):
+    from .alchemy import create_hybrids, gen_alchemy_graph
+
 from .converters import dump_index, gro2pdb, load_index, pdb2gro, split_sdf
 from .geometry_transform import (
     axial_align,

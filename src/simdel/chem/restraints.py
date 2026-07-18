@@ -6,19 +6,19 @@ import typing
 
 import pandas as pd
 
-from simdel._misc import utils
+from simdel import _utils
 
 from . import topology, views
 
 T = typing.TypeVar("T", bound="Restraints")
 
 
-class Restraints(utils.Table):
+class Restraints(_utils.Table):
     """Base user defined restraints class."""
 
     _field_name: str
 
-    def convert(self) -> dict[str, utils.Table]:
+    def convert(self) -> dict[str, _utils.Table]:
         """Convert user defined restraints to the topology table for each molecule.
 
         :return: Topology restraints table map corresponding to user defined restraints,
@@ -70,7 +70,7 @@ class PositionRestraints(Restraints):
         )
         return PositionRestraints(molecule=view.molecule, ai=view.ai, **data)
 
-    def convert(self) -> dict[str, utils.Table]:
+    def convert(self) -> dict[str, _utils.Table]:
         """Convert positional restraints to the topology table for each molecule.
 
         :return: Topology restraints table {molecule: topology.PositionRestraints table}

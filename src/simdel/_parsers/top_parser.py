@@ -9,7 +9,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from simdel._misc import log
+from simdel import _log
 
 
 class Table(BaseModel):
@@ -1169,7 +1169,7 @@ class TOPFile(BaseModel):
             self.section = self.ff
         elif title in FFData.model_fields and not self.section:
             msg = f"Forcefield table without previous data: {title}"
-            log.warning(msg)
+            _log.warning(msg)
             self.section = self.ff
 
         elif title == "moleculetype":
@@ -1177,7 +1177,7 @@ class TOPFile(BaseModel):
             self.top_list.append(self.section)
         elif title in TopologyData.model_fields and not self.section:
             msg = f"Topology table without previous data: {title}"
-            log.warning(msg)
+            _log.warning(msg)
             self.section = TopologyData()
             self.top_list.append(self.section)
 
@@ -1185,7 +1185,7 @@ class TOPFile(BaseModel):
             self.section = self.system
         elif title in SystemData.model_fields and not self.section:
             msg = f"System table without previous data: {title}"
-            log.warning(msg)
+            _log.warning(msg)
             self.section = self.system
 
         elif not self.section:

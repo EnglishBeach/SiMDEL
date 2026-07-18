@@ -7,10 +7,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from simdel import chem, func
+from simdel import _utils, chem, func
 from simdel._wrappers import gromacs
 
 
+@_utils.require(gromacs)
 def create_box(
     system: chem.System,
     workdir: Path,
@@ -170,6 +171,7 @@ def rescale_box(
     )
 
 
+@_utils.require(gromacs)
 def create_gromacs_indexes(system: chem.System, workdir: Path) -> dict[str, pd.Series[bool]]:
     """Create all selections by GROMACS.
 

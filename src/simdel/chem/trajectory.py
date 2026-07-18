@@ -9,12 +9,12 @@ import tempfile
 import mdtraj
 from pydantic import BaseModel
 
-from simdel._misc import utils
+from simdel import _utils
 
 from . import system as system_
 
 
-class EnergyDump(utils.PathContainer):
+class EnergyDump(_utils.PathContainer):
     """Energy files path container."""
 
     edr: Path | None = None
@@ -59,7 +59,7 @@ class Trajectory(BaseModel):
         """
         traj = destination_dir / self.file.name
         if traj != self.file:
-            utils.backup(traj)
+            _utils.backup(traj)
             self.file = self.file.replace(traj)
 
     def copy(self, destination_dir: Path) -> Trajectory:  # type: ignore
@@ -71,7 +71,7 @@ class Trajectory(BaseModel):
         destination_dir.mkdir(parents=True, exist_ok=True)
         traj = destination_dir / self.file.name
         if traj != self.file:
-            utils.backup(traj)
+            _utils.backup(traj)
             shutil.copy(src=self.file, dst=traj)
         return Trajectory(
             file=traj,

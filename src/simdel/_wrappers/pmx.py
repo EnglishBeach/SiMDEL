@@ -2,11 +2,34 @@
 
 from pathlib import Path
 
-from simdel._misc import context, utils
+import lomap
+
+from simdel import _utils
 from simdel._parsers import top_parser
 
+_utils.run("pmx check", ["which pmx"])
 
-class AlignedFiles(utils.PathContainer):
+
+def generate_graph(workdir: Path, sdf_map: dict[str, Path]) -> list[tuple[Path, Path]]:
+    """Generate transitions graph by lomap algorithm.
+
+    :param workdir: Workdir path
+    :param sdf_map: Ligand sdf fname:path map
+    :return: List of pairs
+    """
+    mol_db = lomap.DBMolecules(directory=workdir.as_posix(), radial=True)
+    mol_db.build_matrices()
+    nx_graph = mol_db.build_graph()
+    pairs = []
+    for s, e in nx_graph.edges:  # type: ignore
+        sdf_a = Path(mol_db.dic_mapping[s]).stem
+        sdf_b = Path(mol_db.dic_mapping[e]).stem
+
+        pairs.append((sdf_map[sdf_a], sdf_map[sdf_b]))
+    return pairs
+
+
+class AlignedFiles(_utils.PathContainer):
     """Align ligands output file path container."""
 
     pair_ab: Path
@@ -34,7 +57,6 @@ class AlignedFiles(utils.PathContainer):
     """Aligning log .log file path"""
 
 
-@context.require_pmx
 def align_ligands(
     workdir: Path,
     geometry_a: Path,
@@ -73,7 +95,7 @@ def align_ligands(
         f"-log '{log_file.resolve()}'",
     ]
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"atom mapping {geometry_a.name}, {geometry_a.name}",
         workdir=workdir,
@@ -90,7 +112,7 @@ def align_ligands(
     )
 
 
-class HybridizeLigandsOut(utils.PathContainer):
+class HybridizeLigandsOut(_utils.PathContainer):
     """Hybridize ligands output file path container."""
 
     geometry_a: Path
@@ -107,7 +129,6 @@ class HybridizeLigandsOut(utils.PathContainer):
 
 
 # TODO: refactor
-@context.require_pmx
 def hybridize_ligands(  # noqa: PLR0913
     workdir: Path,
     topology_name: str,
@@ -153,7 +174,7 @@ def hybridize_ligands(  # noqa: PLR0913
         f"-log '{log_file.resolve()}'",
     ]
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"ligand hybrid {geometry_a.name} {geometry_b.name}",
         workdir=workdir,
@@ -167,7 +188,7 @@ def hybridize_ligands(  # noqa: PLR0913
         *hybrid_ff.read_text().split("\n"),
     ]
     topology = workdir / "lig_a.top"
-    utils.backup(topology)
+    _utils.backup(topology)
     topology.write_text(
         "\n".join(data_merged) + hybrid_itp.read_text() + _system_head(topology_name)
     )
@@ -179,7 +200,7 @@ def hybridize_ligands(  # noqa: PLR0913
     )
 
 
-class BAROut(utils.PathContainer):
+class BAROut(_utils.PathContainer):
     """Calculate BAR output file path container."""
 
     BAR: Path
@@ -196,7 +217,6 @@ class BAROut(utils.PathContainer):
 
 
 # TODO: extract plots...
-@context.require_pmx
 def calculate_BAR(
     workdir: Path,
     xvgs_a: list[Path],
@@ -233,7 +253,7 @@ def calculate_BAR(
         f"-b {samples}",
     ]
 
-    utils.run(
+    _utils.run(
         command=command,
         title="analyze BAR",
         workdir=workdir,

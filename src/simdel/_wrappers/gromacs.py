@@ -2,10 +2,12 @@
 
 from pathlib import Path
 
-from simdel._misc import utils
+from simdel import _utils
+
+_utils.run("gromacs check", ["which gmx"])
 
 
-class GromppOut(utils.PathContainer):
+class GromppOut(_utils.PathContainer):
     """Grompp output file path container."""
 
     tpr: Path
@@ -71,7 +73,7 @@ def grompp(  # noqa: PLR0913
     else:
         out_top = top
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"preprocess {geometry.name}, {top.name}",
         workdir=workdir,
@@ -79,7 +81,7 @@ def grompp(  # noqa: PLR0913
     return GromppOut(tpr=tpr, full_mdp=full_mdp, top=out_top)
 
 
-class Pdb2gmxOut(utils.PathContainer):
+class Pdb2gmxOut(_utils.PathContainer):
     """Pdb2gmx protein output file paths container."""
 
     gro: Path
@@ -151,7 +153,7 @@ def pdb2gmx(  # noqa: PLR0913
     if fix_missing:
         command.append("-missing")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"pdb2gmx {geometry.name}",
         workdir=workdir,
@@ -198,7 +200,7 @@ def editconf(  # noqa: PLR0913
     elif center is False:
         command.append("-noc")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"editconf {geometry.name}",
         workdir=workdir,
@@ -209,7 +211,7 @@ def editconf(  # noqa: PLR0913
     return out_box
 
 
-class SolvateOut(utils.PathContainer):
+class SolvateOut(_utils.PathContainer):
     """Solvate output file paths container."""
 
     gro: Path
@@ -245,7 +247,7 @@ def solvate(
         f"-o '{gro.resolve()}'",
     ]
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"solvate {top.name}",
         workdir=workdir,
@@ -253,7 +255,7 @@ def solvate(
     return SolvateOut(gro=gro, top=top.replace(workdir / f"{out_name}.top"))
 
 
-class GenionOut(utils.PathContainer):
+class GenionOut(_utils.PathContainer):
     """Generate ions output file path container."""
 
     gro: Path
@@ -309,7 +311,7 @@ def genion(  # noqa: PLR0913
     if neutral:
         command.append("-neutral")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"genion {top.name}",
         workdir=workdir,
@@ -425,7 +427,7 @@ def trjconv(  # noqa: PLR0913
         groups_text = "\n".join(groups)
         command.append(f"<< EOF\n{groups_text}\nEOF")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"trjconv {trajectory.name}",
         workdir=workdir,
@@ -436,7 +438,7 @@ def trjconv(  # noqa: PLR0913
     return [workdir / f"{out_name}.xtc"]
 
 
-class MDRunOut(utils.PathContainer):
+class MDRunOut(_utils.PathContainer):
     """MDRun output file path container."""
 
     gro: Path
@@ -495,7 +497,7 @@ def mdrun(  # noqa: PLR0913
     if plumed:
         command.append(f"-plumed {plumed.resolve()}")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"mdrun {out_name}",
         workdir=workdir,
@@ -537,7 +539,7 @@ def make_ndx(
     selections_text = "\n".join(groups)
     command.append(f"<< EOF\n{selections_text}\nEOF")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"make_ndx {geometry.name}",
         workdir=workdir,

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pandas as pd
 
-from simdel._misc import utils
+from simdel import _utils
 
 
-class TopView(utils.Table):
+class TopView(_utils.Table):
     """Only topology parameters view."""
 
     molecule: pd.Series[str]

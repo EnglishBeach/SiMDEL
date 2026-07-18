@@ -7,8 +7,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from simdel import _ff_collection, run
-from simdel._misc import log
+from simdel import _ff_collection, _log, run
 from simdel._parsers import top_parser
 
 
@@ -123,7 +122,7 @@ class GromacsFF(FF):
                 f"Forcefield: {self.name} is already registered on remote: "
                 f"{destination}/{self.paths[0].name}"
             )
-            log.warning(msg)
+            _log.warning(msg)
         return destination / self.paths[0].name
 
     def get_water_info(self, water: WaterType | None) -> tuple[int, str]:

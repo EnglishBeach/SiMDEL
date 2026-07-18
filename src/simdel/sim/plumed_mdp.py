@@ -8,13 +8,12 @@ import shutil
 
 from pydantic import BaseModel, model_validator
 
-from simdel._misc import context, utils
-
-# TODO: parametrize
+from simdel import _utils
+from simdel._wrappers import plumed
 
 
 # TODO: desc
-@context.require_plumed
+@_utils.require(plumed)
 class PlumedMDP(BaseModel):
     """REQUIRE PLUMED!
     Desc.
@@ -52,7 +51,7 @@ class PlumedMDP(BaseModel):
         :return: _description_
         """
         config_file = save_dir / f"{self.name}.dat"
-        utils.backup(config_file)
+        _utils.backup(config_file)
         config_file.write_text(self.text)
 
         for file in self.other_files:

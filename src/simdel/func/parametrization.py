@@ -4,14 +4,14 @@ from pathlib import Path
 import random
 import shutil
 
-from simdel import chem
-from simdel._misc import context, log, utils
+from simdel import _log, _utils, chem
 from simdel._wrappers import gromacs, openff
 
 from . import geometry_transform, topology_transform
 
 
 # TODO: refactor
+@_utils.require(gromacs)
 def parametrize_protein(  # noqa: PLR0913
     geometry: Path,
     ff: chem.GromacsFF,
@@ -56,7 +56,7 @@ def parametrize_protein(  # noqa: PLR0913
     )
 
     mdp_proxy = workdir / "mdp.mdp"
-    utils.backup(mdp_proxy)
+    _utils.backup(mdp_proxy)
     mdp_proxy.write_text("define =")
     preprocessed = gromacs.grompp(
         workdir=workdir,
@@ -66,7 +66,7 @@ def parametrize_protein(  # noqa: PLR0913
         mdp=mdp_proxy,
         out_name=name,
         merge=True,
-        maxwarn=5 if not context.STRICT else 0,
+        maxwarn=5 if not _utils.STRICT else 0,
     )
 
     system = (
@@ -85,7 +85,7 @@ def parametrize_protein(  # noqa: PLR0913
     return geometry_transform.reset_box(cleared)
 
 
-@context.require_mamba
+@_utils.require(openff)
 def parametrize_small(
     sdf: Path,
     ff: chem.OpenFF,
@@ -111,7 +111,7 @@ def parametrize_small(
     if len(name) > max_name_l:
         new_name = f"L{int(random.random() * 100)}"
         msg = f"Name too long, will be renamed to {new_name}"
-        log.warning(msg)
+        _log.warning(msg)
         name = new_name
 
     files = openff.parametrize(

@@ -4,10 +4,23 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from simdel._misc import context, utils
+import plumed as plumed_adapter
+
+from simdel import _utils
+
+_utils.run("plumed check", ["plumed"])
 
 
-@context.require_plumed
+# TODO: type
+def read_fes(fes: Path):  # noqa: ANN201
+    """Read FES .dat file.
+
+    :param fes: FES .dat file
+    :return: pandas.DataFrame with additional plumed fields
+    """
+    return plumed_adapter.read_as_pandas(fes.as_posix()).rename(columns={"file.free": "free"})
+
+
 def plumed_driver(
     plumed: Path,
     mf_xtc: Path,
@@ -25,7 +38,7 @@ def plumed_driver(
         f"--plumed {plumed.resolve()}",
         f"--mf_xtc {mf_xtc.resolve()}",
     ]
-    utils.run(
+    _utils.run(
         command=command,
         title=f"plumed driver {mf_xtc.name}",
         workdir=workdir,
@@ -34,7 +47,6 @@ def plumed_driver(
 
 # TODO: sigma?
 # TODO: refactor
-@context.require_plumed
 def plumed_sum_hills(  # noqa: PLR0913
     workdir: Path,
     hills: Path,
@@ -115,7 +127,7 @@ def plumed_sum_hills(  # noqa: PLR0913
     if sigma:
         command.append(f"--sigma {sigma}")
 
-    utils.run(
+    _utils.run(
         command=command,
         title=f"plumed sum_hills {hills.name}",
         workdir=workdir,

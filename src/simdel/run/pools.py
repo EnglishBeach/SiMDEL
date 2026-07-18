@@ -12,7 +12,7 @@ import pickle
 import traceback
 import typing
 
-from simdel._misc import log
+from simdel import _log
 
 IN = typing.ParamSpec("IN")
 OUT = typing.TypeVar("OUT")
@@ -258,7 +258,7 @@ def remote_run(input_dump: bytes, log_file: Path) -> bytes:
     try:
         result = f(*args, **kwargs)
     except Exception as e:
-        log.critical(msg="Remote running fail", exc_info=e)
+        _log.critical(msg="Remote running fail", exc_info=e)
     return pickle.dumps(result)
 
 
@@ -279,7 +279,7 @@ def _load_log(log_dump: bytes, id: str) -> typing.Any:
         if log_id := log_dict.get("log_id"):
             log_dict["log_id"] = f"{log_id}:{id}"
         if log_dict.get("log_stream_id"):
-            log_dict["log_stream_id"] = log.LOG_STREAM_ID.get()
+            log_dict["log_stream_id"] = _log.LOG_STREAM_ID.get()
 
         log_record = logging.makeLogRecord(log_dict)
         if log_dict.get("exc_type"):
