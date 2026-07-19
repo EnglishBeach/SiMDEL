@@ -6,12 +6,14 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-
 jobs:
   create-tag:
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event.pull_request.merged == true && (
+        contains(github.event.pull_request.labels.*.name, 'major') ||
+        contains(github.event.pull_request.labels.*.name, 'minor') ||
+        contains(github.event.pull_request.labels.*.name, 'patch')
+      )
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +22,6 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v5
