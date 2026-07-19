@@ -156,3 +156,47 @@ skip-magic-trailing-comma = false
 include = ["src"]
 exclude = ["*/__init__.py", "**/__pycache__", "**/node_modules", ".*", ".venv"]
 typeCheckingMode = "standard"
+
+
+[tool.poetry]
+name = "simdel"
+version = "0.0.0"
+description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
+authors = ["Ilya Krainov", "Danila Iakovlev"]
+readme = "README.md"
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11.0"
+frozendict = ">=2.4.7"
+jupyter = ">=1.1.1"
+matplotlib = ">=3.10.8"
+mdtraj = ">=1.10.3"
+pandas = ">=2.3.3"
+# plumed = ">=2.10.0"
+pydantic = ">=2.12.5"
+rdkit = ">=2024.3.1"
+scipy = ">=1.15.3"
+parmed = ">=4.3.0"
+pygraphviz = ">=1.14"
+pylazyimports = '*'
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=9.0.3"
+ruff = '>=0.15.16'
+pytest-xdist = "*"
+pytest-html = "*"
+
+[tool.poetry.group.plumed.dependencies]
+plumed = "*"
+
+[tool.poetry.group.pmx.dependencies]
+# pmx
+# lomap
+
+[tool.poetry.group.gmx.dependencies]
+# gmx
+
+[tool.poetry.group.openff.dependencies]
+# openff
