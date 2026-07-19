@@ -50,7 +50,7 @@ jobs:
 
           git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 
-          git push origin main --tags
+          git push --tags
 
       - name: Update PR Title with version
         if: steps.semver.outputs.bump_type != ''
