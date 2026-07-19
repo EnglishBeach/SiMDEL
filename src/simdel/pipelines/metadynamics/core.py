@@ -16,13 +16,13 @@ import pandas as pd
 from pydantic import BaseModel
 from scipy import interpolate
 
-from simdel import _log, _utils, analyse, chem, func, traj
+from simdel import _deps, _log, _utils, analyse, chem, func, traj
 from simdel._wrappers import gmx, openff, plumed
 from simdel.pipelines import selections
 
 from . import configs
 
-mark_pipeline = _utils.require(plumed, gmx, openff)
+mark_pipeline = _deps.require(plumed, gmx, openff)
 
 
 class PipelineResult(_utils.Table):

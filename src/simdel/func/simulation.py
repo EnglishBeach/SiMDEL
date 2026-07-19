@@ -10,13 +10,13 @@ import shutil
 from frozendict import frozendict
 import pandas as pd
 
-from simdel import _utils, chem, sim
+from simdel import _deps, _utils, chem, sim
 from simdel._wrappers import gmx
 
 
 # TODO: refactor parameters+plumed_parameters-> simulator
 # TODO: refactor n_mpi,n_omp,compress
-@_utils.require(gmx)
+@_deps.require(gmx)
 def simulate(  # noqa: PLR0913
     system: chem.System,
     parameters: sim.GromacsSimulator,

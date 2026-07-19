@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from simdel import _utils
+from simdel import _deps
 from simdel._wrappers import pmx
 
 
@@ -21,7 +21,7 @@ class AnalyzeResult(BaseModel):
     """Calculate dG bootstrap error, in `kJ/mol`."""
 
 
-@_utils.require(pmx)
+@_deps.require(pmx)
 def analyze_dG(
     workdir: Path,
     xvgs_a: list[Path],

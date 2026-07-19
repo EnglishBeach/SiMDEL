@@ -6,13 +6,13 @@ from pathlib import Path
 import shutil
 
 # import lomap
-from simdel import _utils, chem
+from simdel import _deps, _utils, chem
 from simdel._wrappers import gmx, pmx
 
 from . import converters
 
 
-@_utils.require(pmx)
+@_deps.require(pmx)
 def create_hybrids(
     workdir: Path,
     system_a: chem.System,
@@ -99,7 +99,7 @@ def create_hybrids(
     return hybridA, hybridB
 
 
-# @_utils.require(lomap)
+# @_deps.require(lomap)
 def gen_alchemy_graph(workdir: Path, sdf_list: list[Path]) -> list[tuple[Path, Path]]:
     """REQUIRE MAMBA DEPENDENCIES!
     Generate pair transformations graph, uses LOMAP when n ligands >=6.

@@ -4,14 +4,14 @@ from pathlib import Path
 import random
 import shutil
 
-from simdel import _log, _utils, chem
+from simdel import _deps, _log, _utils, chem
 from simdel._wrappers import gmx, openff
 
 from . import geometry_transform, topology_transform
 
 
 # TODO: refactor
-@_utils.require(gmx)
+@_deps.require(gmx)
 def parametrize_protein(  # noqa: PLR0913
     geometry: Path,
     ff: chem.GromacsFF,
@@ -85,7 +85,7 @@ def parametrize_protein(  # noqa: PLR0913
     return geometry_transform.reset_box(cleared)
 
 
-@_utils.require(openff)
+@_deps.require(openff)
 def parametrize_small(
     sdf: Path,
     ff: chem.OpenFF,

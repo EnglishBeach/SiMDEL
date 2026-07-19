@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from pydantic import BaseModel
 
-from simdel import _utils
+from simdel import _deps
 from simdel._wrappers import plumed
 
 R: float = 8.314
@@ -38,7 +38,7 @@ class CVData(BaseModel):
         return (self.max - self.min) / self.nbins
 
 
-@_utils.require(plumed)
+@_deps.require(plumed)
 class FES(BaseModel, arbitrary_types_allowed=True):
     """Free energy space in time."""
 
@@ -75,7 +75,7 @@ class FES(BaseModel, arbitrary_types_allowed=True):
         )
 
 
-@_utils.require(plumed)
+@_deps.require(plumed)
 def integrate_hills(
     hills: Path,
     T: float,

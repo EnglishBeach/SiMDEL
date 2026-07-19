@@ -8,12 +8,12 @@ import shutil
 
 from pydantic import BaseModel, model_validator
 
-from simdel import _utils
+from simdel import _deps, _utils
 from simdel._wrappers import plumed
 
 
 # TODO: desc
-@_utils.require(plumed)
+@_deps.require(plumed)
 class PlumedMDP(BaseModel):
     """REQUIRE PLUMED!
     Desc.

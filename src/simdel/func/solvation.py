@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from simdel import _utils, chem, sim
+from simdel import _deps, _utils, chem, sim
 from simdel._wrappers import gmx
 
 from . import converters, geometry_transform, topology_transform
@@ -28,7 +28,7 @@ _PROXY_GEOM = """_PROXY
 """
 
 
-@_utils.require(gmx)
+@_deps.require(gmx)
 def solvate(
     system: chem.System,
     ff: chem.GromacsFF,
@@ -86,7 +86,7 @@ def solvate(
 
 
 # TODO: refactor
-@_utils.require(gmx)
+@_deps.require(gmx)
 def resolvate(
     system: chem.System,
     water_type: chem.WaterType,
@@ -137,7 +137,7 @@ def resolvate(
     )
 
 
-@_utils.require(gmx)
+@_deps.require(gmx)
 def add_ions(  # noqa: PLR0913
     system: chem.System,
     concentration: float,

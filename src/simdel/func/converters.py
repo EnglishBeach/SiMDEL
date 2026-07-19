@@ -8,12 +8,12 @@ import shutil
 import pandas as pd
 from rdkit import Chem as rdChem
 
-from simdel import _utils
+from simdel import _deps, _utils
 from simdel._parsers import index_parser
 from simdel._wrappers import gmx, plumed
 
 
-@_utils.require(gmx)
+@_deps.require(gmx)
 def pdb2gro(pdb: Path, workdir: Path) -> Path:
     """Convert geometry .pdb to .gro file by gromacs editconf.
 
@@ -34,7 +34,7 @@ def pdb2gro(pdb: Path, workdir: Path) -> Path:
     )
 
 
-@_utils.require(gmx)
+@_deps.require(gmx)
 def gro2pdb(gro: Path, workdir: Path) -> Path:
     """Convert geometry .gro to .pdb file by gromacs editconf.
 
