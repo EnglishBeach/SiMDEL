@@ -45,17 +45,3 @@ jobs:
           git add pyproject.toml uv.lock
           git commit -m "Bump version to $NEW_VERSION [skip ci]"
           git push
-
-      - name: Update PR Title
-        if: steps.semver.outputs.bump_type != ''
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OLD_TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          NEW_VERSION=$(uv version | cut -d' ' -f2)
-
-          CLEAN_TITLE=$(echo "$OLD_TITLE" | sed -E 's/^\[v[0-9]+\.[0-9]+\.[0-9]+\] //')
-
-          NEW_TITLE="[v$NEW_VERSION] $CLEAN_TITLE"
-
-          gh pr edit ${{ github.event.pull_request.number }} --title "$NEW_TITLE"
