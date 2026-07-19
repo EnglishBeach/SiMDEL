@@ -1,19 +1,12 @@
-name: Create Tag on Main Merge
+name: Push tags
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
 
 jobs:
   create-tag:
-    if: |
-      github.event.pull_request.merged == true && (
-        contains(github.event.pull_request.labels.*.name, 'major') ||
-        contains(github.event.pull_request.labels.*.name, 'minor') ||
-        contains(github.event.pull_request.labels.*.name, 'patch')
-      )
     runs-on: ubuntu-latest
 
     steps:
@@ -26,13 +19,26 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Create and Push Tag
+      - name: Check if tag already exists
+        id: check_tag
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          VERSION=$(uv version | cut -d' ' -f2)
 
-          CURRENT_VERSION=$(uv version | cut -d' ' -f2)
-          git tag -a "v$CURRENT_VERSION" -m "New v$CURRENT_VERSION"
-          git tag -a "latest"
+          TAG="v$VERSION"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-          git push origin main -f --tags
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and push tags
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          TAG="${{ steps.version.check_tag.tag }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          git tag -f latest
+          git push -f origin latest
