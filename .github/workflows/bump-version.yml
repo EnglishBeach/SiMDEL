@@ -12,17 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-          # token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Determine semver bump type
+      - name: Determine bump type
         id: semver
         run: |
           BUMP="patch"
@@ -33,7 +32,7 @@ jobs:
           fi
           echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
 
-      - name: Bump version using uv
+      - name: Bump version
         if: steps.semver.outputs.bump_type != ''
         run: |
           uv version --bump ${{ steps.semver.outputs.bump_type }}
@@ -47,7 +46,7 @@ jobs:
           git commit -m "Bump version to $NEW_VERSION [skip ci]"
           git push
 
-      - name: Update PR Title with version
+      - name: Update PR Title
         if: steps.semver.outputs.bump_type != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
