@@ -1,4 +1,4 @@
-name: Create Tag on Main Merge
+name: Push tags
 
 on:
   pull_request:
