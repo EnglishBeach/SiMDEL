@@ -1,0 +1,61 @@
+name: Bump
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  bump-version:
+    if: contains(github.event.pull_request.labels.*.name, 'major') ||
+        contains(github.event.pull_request.labels.*.name, 'minor') ||
+        contains(github.event.pull_request.labels.*.name, 'patch')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Determine bump type
+        id: semver
+        run: |
+          BUMP="patch"
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'major') }}" == "true" ]]; then
+            BUMP="major"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'minor') }}" == "true" ]]; then
+            BUMP="minor"
+          fi
+          echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        if: steps.semver.outputs.bump_type != ''
+        run: |
+          uv version --bump ${{ steps.semver.outputs.bump_type }}
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          NEW_VERSION=$(uv version | cut -d' ' -f2)
+
+          git add pyproject.toml uv.lock
+          git commit -m "Bump version to $NEW_VERSION [skip ci]"
+          git push
+
+      - name: Update PR Title
+        if: steps.semver.outputs.bump_type != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OLD_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          NEW_VERSION=$(uv version | cut -d' ' -f2)
+
+          CLEAN_TITLE=$(echo "$OLD_TITLE" | sed -E 's/^\[v[0-9]+\.[0-9]+\.[0-9]+\] //')
+
+          NEW_TITLE="[v$NEW_VERSION] $CLEAN_TITLE"
+
+          gh pr edit ${{ github.event.pull_request.number }} --title "$NEW_TITLE"
