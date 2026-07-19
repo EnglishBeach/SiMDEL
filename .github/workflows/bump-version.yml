@@ -34,12 +34,10 @@ jobs:
           echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
 
       - name: Bump version using uv
+        if: steps.semver.outputs.bump_type != ''
         run: |
           uv version --bump ${{ steps.semver.outputs.bump_type }}
 
-      - name: Commit and Push changes
-        if: steps.semver.outputs.bump_type != ''
-        run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
