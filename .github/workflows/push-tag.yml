@@ -36,7 +36,7 @@ jobs:
       - name: Create and push tags
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          TAG="${{ steps.version.check_tag.tag }}"
+          TAG="${{ steps.check_tag.outputs.tag }}"
           git tag "$TAG"
           git push origin "$TAG"
 
