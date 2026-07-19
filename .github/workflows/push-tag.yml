@@ -32,4 +32,6 @@ jobs:
 
           CURRENT_VERSION=$(uv version | cut -d' ' -f2)
           git tag -a "v$CURRENT_VERSION" -m "New v$CURRENT_VERSION"
-          git push origin main --tags
+          git tag -a "latest"
+
+          git push origin main -f --tags
