@@ -2299,6 +2299,12 @@ wheels = [
 ]
 
 [[package]]
+name = "plumed"
+version = "2.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/ca/785e676ad84cd58517c378ea901e554960f79c6b0b82f79b083b9297fc06/plumed-2.10.0.tar.gz", hash = "sha256:5568c5bd37c76c33357b399eef92c6c2c41295259a7b8055a234b4c3d69c2202", size = 341588, upload-time = "2025-09-11T13:44:53.932Z" }
+
+[[package]]
 name = "prometheus-client"
 version = "0.25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3285,8 +3291,8 @@ wheels = [
 
 [[package]]
 name = "simdel"
-version = "0.0.0"
-source = { virtual = "." }
+version = "0.0.1"
+source = { editable = "." }
 dependencies = [
     { name = "frozendict" },
     { name = "jupyter" },
@@ -3304,6 +3310,11 @@ dependencies = [
     { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
+[package.optional-dependencies]
+plumed = [
+    { name = "plumed" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "frozendict", specifier = ">=2.4.7" },
@@ -3311,11 +3322,13 @@ requires-dist = [
     { name = "matplotlib" },
     { name = "mdtraj" },
     { name = "pandas" },
+    { name = "plumed", marker = "extra == 'plumed'" },
     { name = "pydantic" },
     { name = "pylazyimports" },
     { name = "rdkit" },
     { name = "scipy" },
 ]
+provides-extras = ["plumed", "pmx", "gmx", "openff"]
 
 [[package]]
 name = "six"
