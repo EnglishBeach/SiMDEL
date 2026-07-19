@@ -1,4 +1,4 @@
-"""A collection of Gromacs manipulation utilities and MD-based pipelines."""
+"""Easy to start MD library."""
 
 import importlib.metadata as _meta
 
