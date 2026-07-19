@@ -1,9 +1,12 @@
+[build-system]
+requires = ["uv_build<0.12"]
+build-backend = "uv_build"
+
 [project]
 name = "simdel"
-version = "0.0.0"
-description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
+version = "0.0.1"
+description = "Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
-
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -12,14 +15,27 @@ dependencies = [
     "matplotlib",
     "mdtraj",
     "pandas",
-    # "plumed",
     "pydantic",
     "rdkit",
     "scipy",
+    "pylazyimports",
 ]
 
+[project.optional-dependencies]
+plumed = ["plumed"]
+pmx = [
+    # "pmx"
+    # lomap2
+]
+gmx = [
+    # gmx-api
+]
+openff = [
+    # "openff"
+]
+# openmm = ['openmm']
 
-# LINT
+
 [tool.ruff]
 target-version = "py310"
 line-length = 100
@@ -95,7 +111,7 @@ select = ["ALL"]
 fixable = [
     "I", # import sort
 ]
-exclude = ["pmx/**", "**.ipynb", "tests_md/**"]
+exclude = ["libs/**", "**.ipynb"]
 
 
 [tool.ruff.lint.pydocstyle]
@@ -125,24 +141,22 @@ suppress-none-returning = true
 mypy-init-return = true
 allow-star-arg-any = true
 ignore-fully-untyped = true
+[tool.ruff.lint.isort]
+known-first-party = ["simdel"]
+combine-as-imports = true
+force-sort-within-sections = true
 
-[tool.pyright]
-include = ["simdel"]
-exclude = ["*/__init__.py"]
-typeCheckingMode = "standard"
-
-
-# FORMAT
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
 skip-magic-trailing-comma = false
 
-[tool.ruff.lint.isort]
-known-first-party = ["simdel"]
-combine-as-imports = true
-force-sort-within-sections = true
+[tool.pyright]
+include = ["src"]
+exclude = ["*/__init__.py", "**/__pycache__", "**/node_modules", ".*", ".venv"]
+typeCheckingMode = "standard"
+
 
 [tool.poetry]
 name = "simdel"
@@ -150,7 +164,7 @@ version = "0.0.0"
 description = "Coming soon. Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = ["Ilya Krainov", "Danila Iakovlev"]
 readme = "README.md"
-packages = [{ include = "simdel" }]
+packages = [{ include = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11.0"
@@ -165,6 +179,7 @@ rdkit = ">=2024.3.1"
 scipy = ">=1.15.3"
 parmed = ">=4.3.0"
 pygraphviz = ">=1.14"
+pylazyimports = '*'
 
 
 [tool.poetry.group.dev.dependencies]
@@ -172,3 +187,16 @@ pytest = ">=9.0.3"
 ruff = '>=0.15.16'
 pytest-xdist = "*"
 pytest-html = "*"
+
+[tool.poetry.group.plumed.dependencies]
+plumed = "*"
+
+[tool.poetry.group.pmx.dependencies]
+# pmx
+# lomap
+
+[tool.poetry.group.gmx.dependencies]
+# gmx
+
+[tool.poetry.group.openff.dependencies]
+# openff
