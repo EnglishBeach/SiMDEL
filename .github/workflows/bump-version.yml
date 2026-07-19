@@ -41,7 +41,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          NEW_VERSION=$(uv version)
+          NEW_VERSION=$(uv version | cut -d' ' -f2)
 
           git add pyproject.toml uv.lock
           git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
