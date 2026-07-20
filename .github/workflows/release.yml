@@ -73,28 +73,3 @@ jobs:
           token: ${{ secrets.AUTOMATION_PAT }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash
-
-
-  tag:
-    needs: bump
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-          token: ${{ secrets.AUTOMATION_PAT }}
-
-      - uses: astral-sh/setup-uv@v5
-
-      - name: Create and push tags
-        env:
-          VERSION: ${{ needs.bump.outputs.version }}
-        run: |
-          TAG="$VERSION"
-          git tag "$TAG"
-          git push origin "$TAG"
-
-          git tag -f latest
-          git push -f origin latest
