@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "simdel"
-version = "0.1.0"
+version = "0.1.1"
 description = "Simple Molecular Dynamics Expandable Library - easy to start MD library"
 authors = [{ name = "Ilya Krainov" }, { name = "Danila Iakovlev" }]
 readme = "README.md"
