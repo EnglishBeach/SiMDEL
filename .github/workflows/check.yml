@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, reopened]
+  branches-ignore:
+    - 'create-pull-request/patch'
 
 jobs:
   check:
