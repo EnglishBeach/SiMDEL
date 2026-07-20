@@ -3,23 +3,24 @@ name: bump
 on:
   workflow_dispatch:
   pull_request:
-    types: [closed]
-
-
+    types:
+      - closed
+      - labeled
 
 permissions:
   contents: write
   pull-requests: write
 
+
 jobs:
   bump:
     if: |
-        github.event.pull_request.merged == true ||
         contains(github.event.pull_request.labels.*.name, 'major') ||
         contains(github.event.pull_request.labels.*.name, 'minor') ||
         contains(github.event.pull_request.labels.*.name, 'patch')
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.bumpversion.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,27 +47,30 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git checkout -b automation/bump-version-${{ github.run_id }}
-
           uv version --bump ${{ steps.bumptype.outputs.bump_type }}
           NEW_VERSION=$(uv version | cut -d' ' -f2)
+          echo "version=$NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-          git add pyproject.toml uv.lock
-          git commit -m "Bump to v$NEW_VERSION [skip ci]"
-
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
+          base: main
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: automation/bump${{ steps.bumpversion.outputs.version }}
           title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
           body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
-          base: main
-          auto-merge: true
+
+      - name: Enable Pull Request Automerge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash
+
 
   tag:
     needs: bump
@@ -82,8 +86,10 @@ jobs:
       - uses: astral-sh/setup-uv@v5
 
       - name: Create and push tags
+        env:
+          VERSION: ${{ needs.bump.outputs.version }}
         run: |
-          TAG="${{ needs.bump.bumpversion.outputs.version }}"
+          TAG="$VERSION"
           git tag "$TAG"
           git push origin "$TAG"
 
