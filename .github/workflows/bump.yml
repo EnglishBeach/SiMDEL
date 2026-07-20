@@ -65,8 +65,6 @@ jobs:
           title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
           body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
           base: main
-          auto-merge: true
-          merge-method: squash
 
   tag:
     needs: bump
