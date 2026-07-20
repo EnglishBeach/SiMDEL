@@ -1,0 +1,6 @@
+exclude:
+  - dev/*
+  - feature/*
+  - fix/*
+  - refactor/*
+delete_closed_pr: true
