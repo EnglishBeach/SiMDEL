@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   pull_request:
     types: [ready_for_review]
-    branches-ignore:
-      - 'create-pull-request/patch'
+    branches: [main]
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.head_ref, 'create-pull-request/patch') }}
     steps:
       - uses: actions/checkout@v4
       - run: |
