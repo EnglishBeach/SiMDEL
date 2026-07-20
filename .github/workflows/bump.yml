@@ -50,10 +50,12 @@ jobs:
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
           git checkout -b automation/bump$NEW_VERSION
+          git push --set-upstream origin automation/bump$NEW_VERSION
 
           git add pyproject.toml uv.lock
           git commit -m "Bump to v$NEW_VERSION [skip ci]"
-          git push --set-upstream origin automation/bump$NEW_VERSION
+          git push
+
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
@@ -81,7 +83,7 @@ jobs:
 
       - name: Create and push tags
         run: |
-          TAG="${{ needs.bump.bumpversion.outputs.version }}"
+          TAG="${{ needs.bump.outputs.version }}"
           git tag "$TAG"
           git push origin "$TAG"
 
