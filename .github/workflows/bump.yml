@@ -3,6 +3,8 @@ name: bump
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
+
 
 permissions:
   contents: write
