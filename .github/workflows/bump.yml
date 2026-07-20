@@ -41,7 +41,7 @@ jobs:
             BUMP="minor"
           fi
 
-          uv version --bump $BUMP --no-sync --frozen
+          uv version --bump $BUMP --frozen
           NEW_VERSION=$(grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
 
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
