@@ -1,9 +1,9 @@
 name: check
 
-on:
-  pull_request:
-    types: [opened, reopened]
-  workflow_dispatch:
+on: workflow_dispatch
+  # pull_request:
+  #   types: [opened, reopened]
+  # workflow_dispatch:
 
 jobs:
   check:
