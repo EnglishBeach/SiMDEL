@@ -61,7 +61,7 @@ jobs:
           token: ${{ secrets.AUTOMATION_PAT }}
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: automation/bump${{ steps.bumpversion.outputs.version }}
+          branch: automation/bump1
           title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
           body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
           base: main
