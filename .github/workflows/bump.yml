@@ -46,17 +46,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git checkout -b automation/bump
-
           uv version --bump ${{ steps.bumptype.outputs.bump_type }}
           NEW_VERSION=$(uv version | cut -d' ' -f2)
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-          git add pyproject.toml uv.lock
-          git commit -m "Bump to v$NEW_VERSION [skip ci]"
-          git push --set-upstream origin automation/bump
-          git push
-
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
@@ -64,7 +56,6 @@ jobs:
           token: ${{ secrets.AUTOMATION_PAT }}
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: automation/bump
           title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
           body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
           base: main
