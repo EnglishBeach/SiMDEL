@@ -18,14 +18,9 @@ jobs:
           token: ${{ secrets.AUTOMATION_PAT }}
           fetch-depth: 0
 
-      - uses: astral-sh/setup-uv@v5
-
       - name: Create and push tags
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          VERSION=$(uv version | cut -d' ' -f2)
+          VERSION=$(grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
 
           git tag "$VERSION"
           git push origin "$VERSION"

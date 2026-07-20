@@ -22,8 +22,7 @@ jobs:
         contains(github.event.pull_request.labels.*.name, 'patch')
       )
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.bumpversion.outputs.version }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,8 +31,8 @@ jobs:
 
       - uses: astral-sh/setup-uv@v5
 
-      - name: Determine bump type
-        id: bumptype
+      - name: Bump
+        id: bumper
         run: |
           BUMP="patch"
           if [[ "${{ contains(github.event.pull_request.labels.*.name, 'major') }}" == "true" ]]; then
@@ -41,18 +40,10 @@ jobs:
           elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'minor') }}" == "true" ]]; then
             BUMP="minor"
           fi
-          echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
 
-      - name: Bump version
-        if: steps.bumptype.outputs.bump_type != ''
-        id: bumpversion
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          uv version --bump $BUMP --no-sync --frozen
+          NEW_VERSION=$(grep -m 1 version pyproject.toml | tr -s ' ' | tr -d '"' | tr -d "'" | cut -d' ' -f3)
 
-          uv version --bump ${{ steps.bumptype.outputs.bump_type }}
-          NEW_VERSION=$(uv version | cut -d' ' -f2)
-          echo "version=$NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
@@ -61,10 +52,7 @@ jobs:
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
           base: main
-          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
-          body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
+          title: "Bump version to ${{ steps.bumper.outputs.version }}"
 
       - name: Enable Pull Request Automerge
         if: steps.cpr.outputs.pull-request-operation == 'created'
