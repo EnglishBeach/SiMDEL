@@ -3,7 +3,9 @@ name: bump
 on:
   workflow_dispatch:
   pull_request:
-    types: [closed]
+    types:
+      - closed
+      - labeled
 
 permissions:
   contents: write
@@ -13,7 +15,6 @@ permissions:
 jobs:
   bump:
     # if: |
-    #     github.event.pull_request.merged == true ||
     #     contains(github.event.pull_request.labels.*.name, 'major') ||
     #     contains(github.event.pull_request.labels.*.name, 'minor') ||
     #     contains(github.event.pull_request.labels.*.name, 'patch')
@@ -69,10 +70,6 @@ jobs:
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash
 
-      - name: delete branch
-        uses: SvanBoxel/delete-merged-branch@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
 
   # tag:
   #   needs: bump
