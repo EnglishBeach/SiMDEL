@@ -55,7 +55,7 @@ jobs:
 
           git add pyproject.toml uv.lock
           git commit -m "Bump to v$NEW_VERSION [skip ci]"
-          git push
+          git push --set-upstream origin automation/bump$NEW_VERSION
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
