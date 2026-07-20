@@ -49,6 +49,7 @@ jobs:
 
           uv version --bump ${{ steps.bumptype.outputs.bump_type }}
           NEW_VERSION=$(uv version | cut -d' ' -f2)
+          echo "version=$NEW_VERSION"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
@@ -57,7 +58,7 @@ jobs:
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
           base: main
-          ommitter: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
           body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
