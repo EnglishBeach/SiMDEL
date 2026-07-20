@@ -60,26 +60,26 @@ jobs:
           body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
           base: main
 
-  tag:
-    needs: bump
-    runs-on: ubuntu-latest
+  # tag:
+  #   needs: bump
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-          token: ${{ secrets.AUTOMATION_PAT }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: main
+  #         fetch-depth: 0
+  #         token: ${{ secrets.AUTOMATION_PAT }}
 
-      - uses: astral-sh/setup-uv@v5
+  #     - uses: astral-sh/setup-uv@v5
 
-      - name: Create and push tags
-        env:
-          VERSION: ${{ needs.bump.outputs.version }}
-        run: |
-          TAG="$VERSION"
-          git tag "$TAG"
-          git push origin "$TAG"
+  #     - name: Create and push tags
+  #       env:
+  #         VERSION: ${{ needs.bump.outputs.version }}
+  #       run: |
+  #         TAG="$VERSION"
+  #         git tag "$TAG"
+  #         git push origin "$TAG"
 
-          git tag -f latest
-          git push -f origin latest
+  #         git tag -f latest
+  #         git push -f origin latest
