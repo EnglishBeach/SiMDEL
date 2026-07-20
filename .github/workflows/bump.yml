@@ -50,6 +50,9 @@ jobs:
           NEW_VERSION=$(uv version | cut -d' ' -f2)
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
+          git checkout -b automation/bump$NEW_VERSION
+
+
           git add pyproject.toml uv.lock
           git commit -m "Bump to v$NEW_VERSION [skip ci]"
 
