@@ -14,10 +14,10 @@ permissions:
 
 jobs:
   bump:
-    # if: |
-    #     contains(github.event.pull_request.labels.*.name, 'major') ||
-    #     contains(github.event.pull_request.labels.*.name, 'minor') ||
-    #     contains(github.event.pull_request.labels.*.name, 'patch')
+    if: |
+        contains(github.event.pull_request.labels.*.name, 'major') ||
+        contains(github.event.pull_request.labels.*.name, 'minor') ||
+        contains(github.event.pull_request.labels.*.name, 'patch')
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bumpversion.outputs.version }}
@@ -72,26 +72,26 @@ jobs:
           merge-method: squash
 
 
-  # tag:
-  #   needs: bump
-  #   runs-on: ubuntu-latest
+  tag:
+    needs: bump
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         ref: main
-  #         fetch-depth: 0
-  #         token: ${{ secrets.AUTOMATION_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.AUTOMATION_PAT }}
 
-  #     - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v5
 
-  #     - name: Create and push tags
-  #       env:
-  #         VERSION: ${{ needs.bump.outputs.version }}
-  #       run: |
-  #         TAG="$VERSION"
-  #         git tag "$TAG"
-  #         git push origin "$TAG"
+      - name: Create and push tags
+        env:
+          VERSION: ${{ needs.bump.outputs.version }}
+        run: |
+          TAG="$VERSION"
+          git tag "$TAG"
+          git push origin "$TAG"
 
-  #         git tag -f latest
-  #         git push -f origin latest
+          git tag -f latest
+          git push -f origin latest
