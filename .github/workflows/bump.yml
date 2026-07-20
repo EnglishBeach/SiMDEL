@@ -7,10 +7,6 @@ on:
 
 
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   bump:
     # if: |
@@ -19,6 +15,9 @@ jobs:
     #     contains(github.event.pull_request.labels.*.name, 'minor') ||
     #     contains(github.event.pull_request.labels.*.name, 'patch')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +40,8 @@ jobs:
 
       - name: Bump version
         if: steps.bumptype.outputs.bump_type != ''
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
         id: bumpversion
         run: |
           git config --global user.name "github-actions[bot]"
@@ -51,7 +52,6 @@ jobs:
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
           git checkout -b automation/bump$NEW_VERSION
-
 
           git add pyproject.toml uv.lock
           git commit -m "Bump to v$NEW_VERSION [skip ci]"
