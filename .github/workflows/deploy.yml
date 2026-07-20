@@ -27,8 +27,8 @@ jobs:
 
           VERSION=$(uv version | cut -d' ' -f2)
 
-          git tag "$TAG"
-          git push origin "$TAG"
+          git tag "$VERSION"
+          git push origin "$VERSION"
 
           git tag -f latest
           git push -f origin latest
