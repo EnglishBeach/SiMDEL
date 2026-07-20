@@ -1,8 +1,15 @@
 name: bump
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [closed]
+
+
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   bump:
@@ -14,14 +21,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
           fetch-depth: 0
 
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v5
 
       - name: Determine bump type
         id: bumptype
@@ -36,7 +41,7 @@ jobs:
 
       - name: Bump version
         if: steps.bumptype.outputs.bump_type != ''
-        id: version
+        id: bumpversion
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -51,12 +56,36 @@ jobs:
           git commit -m "Bump to v$NEW_VERSION [skip ci]"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
-          branch: automation/bump-v${{ steps.version.outputs.version }}
-          title: "Bump version to v${{ steps.version.outputs.version }}"
-          body: "Automated version bump (v${{ steps.version.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          branch: automation/bump${{ steps.bumpversion.outputs.version }}
+          title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
+          body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
           base: main
-          labels: |
-            automated-pr
+          auto-merge: true
+          merge-method: squash
+
+  tag:
+    needs: bump
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Create and push tags
+        run: |
+          TAG="${{ needs.bump.bumpversion.outputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          git tag -f latest
+          git push -f origin latest
