@@ -40,9 +40,7 @@ jobs:
 
       - name: Bump version
         if: steps.bumptype.outputs.bump_type != ''
-        with:
-          token: ${{ secrets.AUTOMATION_PAT }}
-          id: bumpversion
+        id: bumpversion
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
