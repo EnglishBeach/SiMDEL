@@ -1,0 +1,98 @@
+name: release
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+
+permissions:
+  contents: write
+  pull-requests: write
+
+
+jobs:
+  bump:
+    if: |
+      github.event.pull_request.merged == true ||
+      contains(github.event.pull_request.labels.*.name, 'major') ||
+      contains(github.event.pull_request.labels.*.name, 'minor') ||
+      contains(github.event.pull_request.labels.*.name, 'patch')
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bumpversion.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Determine bump type
+        id: bumptype
+        run: |
+          BUMP="patch"
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'major') }}" == "true" ]]; then
+            BUMP="major"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'minor') }}" == "true" ]]; then
+            BUMP="minor"
+          fi
+          echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        if: steps.bumptype.outputs.bump_type != ''
+        id: bumpversion
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          uv version --bump ${{ steps.bumptype.outputs.bump_type }}
+          NEW_VERSION=$(uv version | cut -d' ' -f2)
+          echo "version=$NEW_VERSION"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          base: main
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          title: "Bump version to v${{ steps.bumpversion.outputs.version }}"
+          body: "Automated version bump (v${{ steps.bumpversion.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
+
+      - name: Enable Pull Request Automerge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
+
+
+  tag:
+    needs: bump
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Create and push tags
+        env:
+          VERSION: ${{ needs.bump.outputs.version }}
+        run: |
+          TAG="$VERSION"
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          git tag -f latest
+          git push -f origin latest
