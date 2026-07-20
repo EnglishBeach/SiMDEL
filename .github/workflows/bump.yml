@@ -1,0 +1,61 @@
+name: bump
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  bump:
+    if: |
+        github.event.pull_request.merged == true ||
+        contains(github.event.pull_request.labels.*.name, 'major') ||
+        contains(github.event.pull_request.labels.*.name, 'minor') ||
+        contains(github.event.pull_request.labels.*.name, 'patch')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Determine bump type
+        id: bumptype
+        run: |
+          BUMP="patch"
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'major') }}" == "true" ]]; then
+            BUMP="major"
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'minor') }}" == "true" ]]; then
+            BUMP="minor"
+          fi
+          echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        if: steps.bumptype.outputs.bump_type != ''
+        id: version
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b automation/bump-version-${{ github.run_id }}
+
+          uv version --bump ${{ steps.bumptype.outputs.bump_type }}
+          NEW_VERSION=$(uv version | cut -d' ' -f2)
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          git add pyproject.toml uv.lock
+          git commit -m "Bump to v$NEW_VERSION [skip ci]"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          branch: automation/bump-v${{ steps.version.outputs.version }}
+          title: "Bump version to v${{ steps.version.outputs.version }}"
+          body: "Automated version bump (v${{ steps.version.outputs.version }}) triggered by PR #${{ github.event.pull_request.number }}"
+          base: main
+          labels: |
+            automated-pr
