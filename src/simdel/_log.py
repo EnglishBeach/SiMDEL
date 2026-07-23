@@ -26,7 +26,7 @@ _log_lock: threading.Lock = threading.Lock()
 
 _LOG_STREAM_ID_DEFAULT: str = "-1"
 """LOG_STREAM_ID"""
-
+# TODO: set default to None
 LOG_STREAM_ID: contextvars.ContextVar[str] = contextvars.ContextVar(
     "_LOG_STREAM_ID", default=_LOG_STREAM_ID_DEFAULT
 )
